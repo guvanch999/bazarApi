@@ -1,7 +1,7 @@
 const pool=require('../db/db');
 const queries=require('../sqlqueries/CayalogsQueries');
 const sender=require('../utils/sendRespond');
-
+const promiseExecuter=require('../utils/promisiFunctions')
 var getShopCatalogs=async (req,res)=>{
     var _bid=req.params.b_id;
     var _sid=req.params.s_id;
@@ -21,7 +21,7 @@ var getShopCatalogs=async (req,res)=>{
     })
 }
 var getAllCatalogs=async (req,res)=>{
-    await pool.query(queries.ALLCATALOGS({})).then((rows)=>{
+    await promiseExecuter.queryExequterWithThenBlock(queries.SELECTALLKATALOGS).then((rows)=>{
         return sender.sendSuccess(res,rows);
     }).catch(err=>{
         console.log(err);

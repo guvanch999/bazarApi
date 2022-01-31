@@ -16,14 +16,17 @@ module.exports = {
     KSHOPIMAGES:(params)=>`select pp.photo  from product_photo as pp inner join product as p  on p.id=pp.product_id where pp.shop_id=${params.shop_id} and p.imgforshop=1;`,
     CHECKFOLLOW:(params)=>`select count(*) from follow where user_id=${params.user_id} and shop_id=${params.shop_id}`,
     COUNTOFFOLLOWERS:(params)=>`select count(*) from follow where shop_id=${params.shop_id}`,
-    COUNTOFPRODUCTS:(params)=>`select count(*) from product where shop_id=${params.shop_id}`
+    COUNTOFPRODUCTS:(params)=>`select count(*) from product where shop_id=${params.shop_id}`,
     //done
 
 
-
+    BOLUM_SHOPS:(params)=>`select s.* from shop_bolum sb inner join shop s on s.id=sb.shop_id where sb.bolum_id=${params.bolum_id}`,
     //shop detailda yyly hasaplatmaly
     //shop detailda hasaplatmaly zatlar kop
 
 
+
+    //arzanladysh pagede her skidkasy bolan produktly shoplary cykarmaly productlar bilen bile productlar arzanladysh boyuncha sortlanmaly
+    //her dukana girende skidkadaky productlary chykarmaly
 
 }

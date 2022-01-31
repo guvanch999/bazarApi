@@ -2,6 +2,7 @@ const pool=require('../db/db');
 const queries=require('../sqlqueries/shopQueries');
 const sender=require('../utils/sendRespond');
 const functionsUSE=require('../db/bigRequersts');
+const promiseFunctions=require('../utils/promisiFunctions');
 
 var getShopMiniById=async (req,res)=>{
       var shop_id=req.params.id;
@@ -83,7 +84,19 @@ var getShopsWithCckg=async (req,res)=>{
         return sender.sendRespondInternalSErr(res,req.lang);
     }
 }
+let getBolumShops=async (req,res)=>{
+    let _bolum_id=req.params.bolum_id;
+    if(!_bolum_id){
+        return sender.sendRespondInvalidParams(res,req.lang);
+    }
+    await promiseFunctions.queryExequterWithThenBlock(queries.BOLUM_SHOPS({bolum_id:_bolum_id})).then(rows=>{
+        return sender.sendSuccess(res,rows);
+    }).catch(err=>{
+        console.log(err);
+        return sender.sendRespondInternalSErr(res,req.lang);
+    })
 
+}
 
 module.exports = {
     getShopMiniById,
@@ -91,5 +104,6 @@ module.exports = {
     getShopAds,
     getShopBanners,
     getShopCatalogs,
-    getShopsWithCckg
+    getShopsWithCckg,
+    getBolumShops
 }

@@ -1,6 +1,6 @@
 module.exports = {
     GETALLBANNERS:"select * from banner where bolum_id=0  order by id;",
-
+    GETALLBOLUMLER:`select * from bolum;`,
 
     //uc sany magazinlary chekdirmeli main_shopsDan
     GETMAINSHOPS:(params)=>`select s.* from main_shops as ms inner join shop s on s.id=ms.shop_id order by ms.tertip_nomer`,
@@ -8,12 +8,16 @@ module.exports = {
 
 
     ADSADMIN:"select * from ads_admin order by tertip_nomer asc;",
-
-
-
+    ADSADMINONE:(params)=>`select * from ads_admin order by tertip_nomer asc limit 1 offset ${ params.skip };`,
+    GETPRODUCTBYID:(params)=>`select * from product where id=${params.id}`,
+    GETSERVICESHOPPRODUCT:(params)=>`select * from service_shops where id=${params.id};`,
+    GETSHOPBYID:(params)=>`select * from shop where id=${params.id}`,
+    GETSERVISESHOPBYID:(params)=>`select * from service_shops where id=${params.id}`,
 
     //ads_lary priducd datail bn cekmeli ikinji sahypa; hyzmat id hem gelip biilyar barlamaly is_product bn, {shop yada servese shop ady bn suratyny almaly}, {added date gelmeli}
     ADSFROMSHOP:"select * from ads_fromshops where checked=1 order by payment,tertip_nomer asc;",
+    ADSFROMSHOPPAGE:(params)=>`select * from ads_fromshops where verify=1 order by payment,tertip_nomer asc limit 8 offset ${params.skip};`,
+
     SHOPDETAILSPhotoAndname:(params)=>`select photo,shop_name,shop_nameRU from shop where id=${params.id}`,
     SERVICESHOPS:(params)=>`select photo,service_shops_name,service_shops_nameRU from service_shops where id=${params.id}`,
     DETAILSFULL:(params)=>`select * from product where id=${params.id}`,

@@ -9,6 +9,6 @@ router.get('/shopkatalogs/:id',controller.getShopCatalogs);
 
 router.get('/katalogshops/:catalog_id',controller.getShopsWithCckg);
 
-
+router.get('/bolum-shops/:bolum_id',controller.getBolumShops);
 
 module.exports = router;

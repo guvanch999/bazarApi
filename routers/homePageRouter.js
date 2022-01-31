@@ -11,9 +11,8 @@ router.post('/productscard',controller.getProductsCard);
 router.get('/categories/:k_id',controller.getCategoriesByBid);
 router.get('/subcategories/:c_id',controller.getSubCategories);
 router.get('/allshops/:b_id',controller.getAllShopsOfBolum);
-
-
-
+router.get('/bolumler',controller.getBolumler)
+router.get('/adshome',controller.getAdsForHomePage)
 router.get('/secondvariantpage',controller.secondpageDetails);
 router.get('/theeShops-homePage',controller.theeShopsForHomePage);
 router.post('/follow',controller.followFunction);
