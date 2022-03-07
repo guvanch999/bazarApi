@@ -1,12 +1,12 @@
 const mysql=require('mysql');
-
+const config=require('../configuration')
 var con = mysql.createConnection({
-      host: "localhost",
-      port:3308,
-      user: "root",
-      password: "fib11235813",
-      database:'bazar_tm'
-    });
-    
+      host: config.host,
+      port:config.port,
+      user: config.user,
+      password: config.pass,
+      database:config.dbname
+});
+
 
 module.exports=con;
