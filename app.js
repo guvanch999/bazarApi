@@ -1,11 +1,13 @@
 const pool = require('./db/db');
 const express = require('express');
-
-const port = process.env.PORT || 8080;
+const path =require('path');
+const port = process.env.PORT || 8008;
 
 const app = express();
 require('./midlwares/initMidllwares')(app);
 require('./routers/initRouter')(app);
+app.use('/uploads', express.static('uploads'));
+
 async function startServer() {
     await pool.connect(function (err) {
         if (err) {

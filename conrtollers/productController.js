@@ -2,7 +2,6 @@ const pool = require('../db/db');
 const queries = require('../sqlqueries/productsQuery');
 const sender = require('../utils/sendRespond');
 const promiseFunctions = require('../utils/promisiFunctions');
-const {semver} = require("nodemon/lib/utils");
 var productDetailsMini = async (req, res) => {
     var p_id = req.params.id;
     if (p_id === undefined) {
@@ -89,7 +88,7 @@ var getAllProducts = async (req, res) => {
             }
             return sender.sendSuccessWithCount(res, rows,total);
         } else
-            return sender.sendSuccess(res, rows,total);
+            return sender.sendSuccessWithCount(res, rows,total);
     }).catch(err => {
         console.log(err);
         return sender.sendRespondInternalSErr(res, req.lang);

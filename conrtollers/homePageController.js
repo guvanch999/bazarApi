@@ -2,9 +2,7 @@ const pool = require('../db/db');
 const queries = require('../sqlqueries/homeQueries');
 const sender = require('../utils/sendRespond');
 const functionsforUSE = require('../db/bigRequersts');
-const {use} = require("express/lib/router");
-const promiseFunctions=require('../utils/promisiFunctions')
-const {domainToASCII} = require("url");
+const promiseFunctions = require('../utils/promisiFunctions')
 var getAllBanners = async (req, res) => {
     await pool.query(queries.GETALLBANNERS, (err, result) => {
         if (err) {
@@ -22,152 +20,6 @@ var getAdsAdmin = async (req, res) => {
         }
         return sender.sendSuccess(res, rows);
     });
-}
-var getBolumler = async (req, res) => {
-    await pool.query(queries.GETALLBOLUMLER, (err, rows) => {
-        if (err) {
-            console.log(err);
-            return sender.sendRespondInternalSErr(res, req.lang)
-        }
-        ;
-        return sender.sendSuccess(res, rows);
-    })
-}
-var getAdsForHomePage = async (req, res) => {
-    let _page = req.url_queries.page || 1;
-    await pool.query(queries.ADSADMINONE({skip: _page - 1}), async (err, rows) => {
-        if (err) {
-            console.log(err);
-            return sender.sendRespondInternalSErr(res, req.lang);
-        }
-        if (rows.length) {
-            return await pool.query(queries.ADSFROMSHOPPAGE({skip: (_page - 1) * 8}), async (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return sender.sendRespondInternalSErr(res, req.lang);
-                }
-                if (result.length) {
-                    result.push(rows[0]);
-                    let _temp=[]
-                    for await (const contents of result.map(row => {
-                        if (row.ads_type_id) {
-                            switch (row.ads_type_id) {
-                                case 1: {
-                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then((rows) => {
-                                        row.detail = rows.length ? rows[0] : {};
-                                        return row;
-                                    }).catch(err => {
-                                        row.detail = {};
-                                        return row
-                                    })
-                                    break;
-                                }
-                                case 2: {
-                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then((rows) => {
-                                        row.detail = rows.length ? rows[0] : {};
-                                        return row;
-                                    }).catch(err => {
-                                        row.detail = {};
-                                        return row
-                                    })
-                                    break
-                                }
-                                case 3: {
-                                    row.detail = {};
-                                    break
-                                }
-                                case 4: {
-                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSHOPBYID({id: row.shop_id})).then((rows) => {
-                                        row.detail = rows.length ? rows[0] : {};
-                                        return row;
-                                    }).catch(err => {
-                                        row.detail = {};
-                                        return row
-                                    })
-                                    break
-                                }
-                                case 5: {
-                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSERVISESHOPBYID({id: row.shop_id})).then((rows) => {
-                                        row.detail = rows.length ? rows[0] : {};
-                                        return row;
-                                    }).catch(err => {
-                                        row.detail = {};
-                                        return row
-                                    })
-                                    break
-                                }
-                            }
-                        }
-                        else
-                        return row;
-                    })){
-                        _temp.push(contents);
-                    }
-
-                    //
-                    // result=result.map((row)=>{
-                    //     if(row.ads_type_id){
-                    //         switch (row.ads_type_id) {
-                    //             case 1: {
-                    //                 console.log('geldi')
-                    //                 promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then(( rows) => {
-                    //                     if (rows.length) {
-                    //                         console.log(rows[0])
-                    //                         row.detail = rows[0];
-                    //                     } else {
-                    //                         row.detail = {};
-                    //                     }
-                    //                 }).catch(err=>{
-                    //                     console.log(err)
-                    //                     row.detail=null
-                    //                 })
-                    //                 break;
-                    //             }
-                    //             case 2: {
-                    //                  promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then((rows) => {
-                    //                     if (rows.length) {
-                    //                         row.detail = rows[0];
-                    //                     } else {
-                    //                         row.detail = {};
-                    //                     }
-                    //                 }).catch(err=>{
-                    //                     console.log(err);
-                    //                     row.detail={}
-                    //                 })
-                    //                 break;
-                    //             }
-                    //             case 3: {
-                    //
-                    //                 break;
-                    //             }
-                    //             case 4: {
-                    //
-                    //                 break;
-                    //             }
-                    //             case 5: {
-                    //
-                    //                 break;
-                    //             }
-                    //         }
-                    //
-                    //
-                    //     } else {
-                    //         row.detail= {};
-                    //     }
-                    //     return row;
-                    // })
-                    //console.log(_temp);
-                    return sender.sendSuccess(res, _temp);
-                } else {
-                    return sender.sendSuccess(res, []);
-                }
-            })
-
-        } else {
-            return sender.sendSuccess(res, []);
-        }
-    })
-
 }
 
 var getAdsFromShops = async (req, res) => {
@@ -319,6 +171,148 @@ var followFunction = async (req, res) => {
         return sender.sendRespondInternalSErr(res, req.lang);
     })
 }
+var getBannerler = async (req, res) => {
+    let _params = req.body;
+    if (_params.limit === undefined) {
+        _params.limit = 10;
+    }
+    await promiseFunctions.queryExequterWithThenBlock(queries.GETBANNERSWITHPARAMS(_params)).then(rows => {
+        return sender.sendSuccess(res, rows);
+    }).catch(err => {
+        console.log(err);
+        return sender.sendRespondInternalSErr(res, req.lang);
+    })
+}
+var getBolumler = async (req, res) => {
+    await pool.query(queries.GETALLBOLUMLER, (err, rows) => {
+        if (err) {
+            console.log(err);
+            return sender.sendRespondInternalSErr(res, req.lang)
+        }
+        rows.unshift({
+            "id": 0,
+            "bolum_name": "Esasy",
+            "bolum_nameRU": "Glawnaya",
+            "photo": null,
+            "tertip_nomer": 999,
+            "visible": 0
+        });
+        return sender.sendSuccess(res, rows);
+    })
+}
+var getAdsForHomePage = async (req, res) => {
+    let _page = req.url_queries.page || 1;
+    await pool.query(queries.ADSADMINONE({skip: (_page - 1)*2}), async (err, rows) => {
+        if (err) {
+            console.log(err);
+            return sender.sendRespondInternalSErr(res, req.lang);
+        }
+        if (rows.length>1) {
+            return await pool.query(queries.ADSFROMSHOPPAGE({ skip: (_page - 1) * 16 }), async (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return sender.sendRespondInternalSErr(res, req.lang);
+                }
+                if (result.length===16) {
+                    rows.forEach(row=>result.unshift(row))
+                    let _temp = []
+                    for await (const contents of result.map(row => {
+                        if (row.ads_type_id) {
+                            switch (row.ads_type_id) {
+                                case 1: {
+                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then((rows) => {
+                                        row.detail = rows.length ? rows[0] : {};
+                                        return row;
+                                    }).catch(err => {
+                                        row.detail = {};
+                                        return row
+                                    })
+                                    break;
+                                }
+                                case 2: {
+                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then((rows) => {
+                                        row.detail = rows.length ? rows[0] : {};
+                                        return row;
+                                    }).catch(err => {
+                                        row.detail = {};
+                                        return row
+                                    })
+                                    break
+                                }
+                                case 3: {
+                                    row.detail = {};
+                                    break
+                                }
+                                case 4: {
+                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSHOPBYID({id: row.shop_id})).then((rows) => {
+                                        row.detail = rows.length ? rows[0] : {};
+                                        return row;
+                                    }).catch(err => {
+                                        row.detail = {};
+                                        return row
+                                    })
+                                    break
+                                }
+                                case 5: {
+                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSERVISESHOPBYID({id: row.shop_id})).then((rows) => {
+                                        row.detail = rows.length ? rows[0] : {};
+                                        return row;
+                                    }).catch(err => {
+                                        row.detail = {};
+                                        return row
+                                    })
+                                    break
+                                }
+                            }
+                        } else
+                            return row;
+                    })) {
+                        if (contents.ads_type_id === 4 || contents.ads_type_id === 5) {
+                            if (req.auth) {
+                                let shop_type = contents.ads_type_id === 5 ? 'shop_id' : 'service_id'
+                                await promiseFunctions.queryExequterWithThenBlock(queries.CHECKFOLLOW({
+                                    user_id: req.user.user_id,
+                                    shop_id: contents.shop_id,
+                                    shop: shop_type
+                                })).then(rows => {
+                                    if (rows.length) {
+                                        if (rows[0].count > 0)
+                                            contents.detail.follow = true;
+                                        else
+                                            contents.detail.follow = false;
+                                    } else
+                                        contents.detail.follow = false;
+                                }).catch(err => {
+                                    console.log(err);
+                                    contents.detail.follow = false;
+                                })
+                                _temp.push(contents);
+                            } else {
+                                contents.detail.follow = false;
+                                _temp.push(contents);
+                            }
+                        } else {
+                            _temp.push(contents);
+                        }
+
+                    }
+
+                    return sender.sendSuccess(res, _temp);
+                } else {
+                    return sender.sendSuccess(res, []);
+                }
+            })
+
+        } else {
+            return sender.sendSuccess(res, []);
+        }
+    })
+
+}
+
+
+
+
 
 
 module.exports = {
@@ -337,5 +331,6 @@ module.exports = {
     getAdsForHomePage,
     secondpageDetails,
     theeShopsForHomePage,
-    followFunction
+    followFunction,
+    getBannerler
 }

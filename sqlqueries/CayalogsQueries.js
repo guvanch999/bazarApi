@@ -10,11 +10,28 @@ module.exports = {
      ALLCATALOGS:(params)=>`select k.*,(select  count(c.*) from category c where c.katalog_id=k.id) as categoryCount from katalog k where k.visible=1 order by k.tertip_nomer desc;`,
      //shopcataloga categorysan goshmaly
 
-     CATEGORIESFORKATALOG:(params)=>`select * from category where katalog_id=${params.catalog_id} and visible=1;`
+     CATEGORIESFORKATALOG:(params)=>`select * from category where katalog_id=${params.catalog_id} and visible=1;`,
      //done
 
 
+     GETCATALOGSWITHFILTER: (params) => {
+          let s = "select * from katalog  where `visible`="+params.verify+' '
 
-
+          if (params.filter) {
+               params.filterValues.forEach(filter=>{
+                    console.log(filter);
+                    s += ` and ${filter.key} = '${filter.value}' `
+               })
+          }
+          if(params.limit){
+               s+=` limit  ${params.limit}`
+          }
+          console.log(s);
+          return s;
+     },
+     GETTABLEPARAMS:(params)=>{
+      let s=`select * from ${params.tableName} where katalog_id='${params.id}';`
+          return s;
+     }
 
 }

@@ -21,7 +21,31 @@ var getShopCatalogs=async (req,res)=>{
     })
 }
 var getAllCatalogs=async (req,res)=>{
-    await promiseExecuter.queryExequterWithThenBlock(queries.SELECTALLKATALOGS).then((rows)=>{
+    let _params=req.url_queries;
+
+        _params.verify=_params.verify==='0'?0:1;
+    console.log(_params);
+
+    await promiseExecuter.queryExequterWithThenBlock(queries.GETCATALOGSWITHFILTER(_params)).then(async  (rows)=>{
+        let _includes=[];
+        if(_params.include){
+            _includes=_params.include.split(',');
+            for(let i=0;i<rows.length;i++){
+                let _tableName='';
+                for(let j=0;j<_includes.length;j++){
+                    _tableName=_includes[j];
+                    await promiseExecuter.queryExequterWithThenBlock(queries.GETTABLEPARAMS({tableName:_tableName,id:rows[i].id}))
+                        .then(result=>{
+                            rows[i][_tableName]=result
+                        })
+                        .catch(err=>{
+                            console.log(err);
+                            rows[i][_tableName]=null;
+                        })
+                }
+            }
+            return sender.sendSuccess(res,rows);
+        } else
         return sender.sendSuccess(res,rows);
     }).catch(err=>{
         console.log(err);
