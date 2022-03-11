@@ -36,7 +36,7 @@ var getBannerL2 = async (req, res) => {
     if (b_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    await pool.query(queries.BANNERL2({id: b_id}), async (err, rows) => {
+    return   await pool.query(queries.BANNERL2({id: b_id}), async (err, rows) => {
         if (err) {
             console.log(err);
             return sender.sendRespondInternalSErr(res, req.lang);
@@ -44,12 +44,12 @@ var getBannerL2 = async (req, res) => {
         if (rows.length > 0) {
             return sender.sendSuccess(res, rows);
         } else {
-            await pool.query(queries.BANNERL2({id: 0})).then((response) => {
+            return  await pool.query(queries.BANNERL2({id: 0}),(error,response) => {
+                if(error){
+                    return sender.sendRespondInternalSErr(res,req.lang)
+                }
                 return sender.sendSuccess(res, response);
-            }).catch(err => {
-                console.log(err);
-                return sender.sendRespondInternalSErr(res, req.lang);
-            });
+            })
         }
     })
 }
