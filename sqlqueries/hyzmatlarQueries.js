@@ -1,5 +1,6 @@
 module.exports = {
     SERVICEKATALOGS:(params)=>`select * from katalog where bolum_id=${params.id}`,
+
     SERVICESHOPS:(params)=>`select * from service_shops limit 6;`,
     SERVICEPRODUCTS:(params)=>{
         var page=params.page;

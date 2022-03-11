@@ -4,6 +4,7 @@ const productRouter=require('./productRouter');
 const catalogrouter=require('./cataloglarRouter');
 const shopRouters=require('./shopRouter');
 const abunalar=require('./abunalar');
+const adress=require('./adresesRoutes')
 module.exports =(app)=>{
   //console.log(app);
  // console.log(testRouter);
@@ -13,5 +14,6 @@ module.exports =(app)=>{
     app.use('/api/v1/catalogs',catalogrouter);
     app.use('/api/v1/shops',shopRouters);
     app.use('/api/v1/abunalar',abunalar);
+    app.use('/api/v1/adress',adress);
     return app;
 }
