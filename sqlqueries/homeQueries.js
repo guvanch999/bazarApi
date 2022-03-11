@@ -37,7 +37,7 @@ module.exports = {
         " inner join shop as s on s.id=v.shop_id  limit 6;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
     CATALOG: (params) => {
-        var s = `select * from katalog where bolum_id=${params.id} where visible=1`;
+        var s = `select * from katalog where bolum_id=${params.id} and visible=1`;
         return s;
     },
     PRODUCTSCARD: (params) => {
