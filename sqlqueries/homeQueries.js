@@ -63,7 +63,7 @@ module.exports = {
             }
         }
 
-        s += " order by important desc skip " + skip + " limit " + count;
+        s += " order by p.rating_sum desc skip " + skip + " limit " + count;
         return s;
     },
     CATEGORIES: (params) => {
