@@ -3,7 +3,7 @@ module.exports = {
     GETALLBOLUMLER: `select * from bolum;`,
 
     //uc sany magazinlary chekdirmeli main_shopsDan
-    GETMAINSHOPS: (params) => `select s.* from main_shops as ms inner join shop s on s.id=ms.shop_id order by ms.tertip_nomer`,
+    GETMAINSHOPS: (params) => `select * from shop order by rating_sum limit 10`,
     //done
 
 
@@ -35,6 +35,7 @@ module.exports = {
     SHOPSL2: "select s.* from vip_shops as v " +
         " inner join bolum as  b on b.id=v.bolum_id " +
         " inner join shop as s on s.id=v.shop_id  limit 6;",
+    VIPSERVICESC6: "select * from service_shops limit 6;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
     CATALOG: (params) => {
         var s = `select * from katalog where bolum_id=${params.id} and visible=1`;

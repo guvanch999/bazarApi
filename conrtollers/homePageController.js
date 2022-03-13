@@ -79,6 +79,16 @@ var getVipShopsc6 = async (req, res) => {
         return sender.sendSuccess(res, rows);
     })
 }
+var getVipServicesc6 = async (req, res) => {
+
+    await pool.query(queries.VIPSERVICESC6, (err, rows) => {
+        if (err) {
+            console.log(err);
+            return sender.sendRespondInternalSErr(res, req.lang);
+        }
+        return sender.sendSuccess(res, rows);
+    })
+}
 
 var getProductsCard = async (req, res) => {
     //if(req.url_queries.count)
@@ -332,5 +342,6 @@ module.exports = {
     secondpageDetails,
     theeShopsForHomePage,
     followFunction,
-    getBannerler
+    getBannerler,
+    getVipServicesc6
 }
