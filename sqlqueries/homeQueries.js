@@ -38,7 +38,7 @@ module.exports = {
     VIPSERVICESC6: "select * from service_shops limit 6;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
     CATALOG: (params) => {
-        var s = `select * from katalog where bolum_id=${params.id} and visible=1`;
+        var s = `select k.*,(select count(*) from category c where c.katalog_id=k.id) as categoryCount from katalog k where k.bolum_id=${params.id} and visible=1`;
         return s;
     },
     PRODUCTSCARD: (params) => {
