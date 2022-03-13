@@ -45,7 +45,7 @@ module.exports = {
         var page = params.page;
         var count = params.count || 20;
         var skip = (page - 1) * count;
-        var s = "select p.*,s.shop_name,s.shop_nameRU from product as p inner join shop as s on p.shop_id=s.id ";
+        var s = "select p.*,s.shop_name from product as p inner join shop as s on p.shop_id=s.id ";
         //console.log(params;
         //bir filter goshmaly important trulary birinji almaly, we random bolmaly
         //shopynam ady gelmeli
@@ -61,9 +61,10 @@ module.exports = {
             if (params.shopID) {
                 s += ` p.shop_id =${params.shopID} and  `
             }
+            s=s.substr(0,s.length-5)
         }
 
-        s += " order by p.rating_sum desc skip " + skip + " limit " + count;
+        s += "order by p.rating_sum desc  limit " + skip + "," + count;
         return s;
     },
     CATEGORIES: (params) => {
