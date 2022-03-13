@@ -3,7 +3,7 @@ module.exports = {
     GETALLBOLUMLER: `select * from bolum;`,
 
     //uc sany magazinlary chekdirmeli main_shopsDan
-    GETMAINSHOPS: (params) => `select * from shop order by rating_sum limit 10`,
+    GETMAINSHOPS: (params) => `select * from shop limit 10`,
     //done
 
 
