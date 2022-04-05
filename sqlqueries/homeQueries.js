@@ -32,9 +32,7 @@ module.exports = {
 
 
     BOLUM: "select * from bolum order by tertip_nomer asc;",
-    SHOPSL2: "select s.* from vip_shops as v " +
-        " inner join bolum as  b on b.id=v.bolum_id " +
-        " inner join shop as s on s.id=v.shop_id  limit 6;",
+    SHOPSL2:(b_id)=>`select s.* from shop s where s.vip=1 and s.id in (select sb.shop_id from shop_bolum sb where sb.bolum_id=${b_id}) limit 6`,
     VIPSERVICESC6: "select * from service_shops limit 6;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
     CATALOG: (params) => {
@@ -72,7 +70,7 @@ module.exports = {
         return s;
     },
     SUBCATEGORIES: (params) => {
-        var s = `select * from subcategory where icategory_id=${params.id}`;
+        var s = `select * from subcategory where category_id=${params.id}`;
         return s;
     },
     ALLSHOPS: (params) => `select s.* from shop as s inner join bolum_shop as bs on bs.shop_id=s.id where bs.bolum_id=${params.id}`,
@@ -86,5 +84,6 @@ module.exports = {
         s+=` limit ${params.limit}`
         console.log(s);
         return s;
-    }
+    },
+    GETALLBRANDS:(bolum_id)=>`select * from brend ${bolum_id?' where bolum_id ='+bolum_id:''}`
 }

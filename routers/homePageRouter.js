@@ -12,6 +12,7 @@ router.post('/productscard',controller.getProductsCard);
 router.get('/categories/:k_id',controller.getCategoriesByBid);
 router.get('/subcategories/:c_id',controller.getSubCategories);
 
+router.get('/brands/:bolum_id',controller.getAllBrands)
 
 
 router.get('/secondvariantpage',controller.secondpageDetails);

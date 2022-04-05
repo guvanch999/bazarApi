@@ -6,8 +6,6 @@ const shopRouters=require('./shopRouter');
 const abunalar=require('./abunalar');
 const adress=require('./adresesRoutes')
 module.exports =(app)=>{
-  //console.log(app);
- // console.log(testRouter);
     app.use('/',testRouter);
     app.use('/api/v1/home',homePageRoutes);
     app.use('/api/v1/product',productRouter);

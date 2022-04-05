@@ -71,7 +71,7 @@ var getVipShopsc6 = async (req, res) => {
     if (b_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    await pool.query(queries.SHOPSL2, (err, rows) => {
+    await pool.query(queries.SHOPSL2(b_id), (err, rows) => {
         if (err) {
             console.log(err);
             return sender.sendRespondInternalSErr(res, req.lang);
@@ -122,7 +122,7 @@ var getCategoriesByBid = async (req, res) => {
     });
 }
 var getSubCategories = async (req, res) => {
-    var c_id = req.params.k_id;
+    var c_id = req.params.c_id;
     if (c_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
@@ -319,7 +319,16 @@ var getAdsForHomePage = async (req, res) => {
     })
 
 }
-
+let getAllBrands=async (req,res)=>{
+    let bolum_id=req.params.bolum_id||0;
+    return await promiseFunctions.queryExequterWithThenBlock(queries.GETALLBRANDS(bolum_id))
+        .then(rows=>{
+            return sender.sendSuccess(res,rows)
+        }).catch(err=>{
+            console.log(err)
+            return sender.sendRespondInternalSErr(res,req.lang)
+        })
+}
 
 
 
@@ -343,5 +352,6 @@ module.exports = {
     theeShopsForHomePage,
     followFunction,
     getBannerler,
-    getVipServicesc6
+    getVipServicesc6,
+    getAllBrands
 }

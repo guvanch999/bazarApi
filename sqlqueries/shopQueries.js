@@ -12,11 +12,11 @@ module.exports = {
     //su zaprosyn icinde 3 sany product image imageforshop true bolanyny chekmeli gelmeli
     //abuna bn product count lary hasaplap aldyrmaly
     //potpisatsya edileni barlamaly
-    KATALOGSHOPS:(params)=>`select s.id as shop_id,s.shop_name,s.shop_nameRU,s.photo from shops as s inner join shop_katalog as sk on sk.shop_id=s.id and sk.katalog_id=${params.katalog_id}`,
-    KSHOPIMAGES:(params)=>`select pp.photo  from product_photo as pp inner join product as p  on p.id=pp.product_id where pp.shop_id=${params.shop_id} and p.imgforshop=1;`,
-    CHECKFOLLOW:(params)=>`select count(*) from follow where user_id=${params.user_id} and shop_id=${params.shop_id}`,
-    COUNTOFFOLLOWERS:(params)=>`select count(*) from follow where shop_id=${params.shop_id}`,
-    COUNTOFPRODUCTS:(params)=>`select count(*) from product where shop_id=${params.shop_id}`,
+    KATALOGSHOPS:(params)=>`select s.id as shop_id,s.shop_name,s.photo from shop s inner join shop_katalog sk on sk.shop_id=s.id and sk.katalog_id=${params.katalog_id}`,
+    KSHOPIMAGES:(params)=>`select pp.photo  from product_photo as pp  where pp.shop_id=${params.shop_id} and pp.esasy=1;`,
+    CHECKFOLLOW:(params)=>`select count(*) as total from follow where user_id=${params.user_id} and shop_id=${params.shop_id}`,
+    COUNTOFFOLLOWERS:(params)=>`select count(*) as total from follow where shop_id=${params.shop_id}`,
+    COUNTOFPRODUCTS:(params)=>`select count(*) as total from product where shop_id=${params.shop_id}`,
     //done
 
 

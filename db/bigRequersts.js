@@ -1,7 +1,6 @@
-const pool=require('./db');
+const {queryExequterWithThenBlock}=require('../utils/promisiFunctions')
 const queries=require('../sqlqueries/homeQueries');
 const shopQueries=require('../sqlqueries/shopQueries');
-const {use} = require("express/lib/router");
 
 let getadsSHopsForSecondPage= async ()=>{
     await pool.query(queries.ADSFROMSHOP).then( async (adslist)=>{
@@ -34,19 +33,19 @@ let getadsSHopsForSecondPage= async ()=>{
 }
 
 var getShopsWithChecking=async (katalog_id,user_id)=>{
-        await pool.query(shopQueries.KATALOGSHOPS({katalog_id:katalog_id})).then(async(rows)=>{
+       return  await  queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({katalog_id:katalog_id})).then(async(rows)=>{
             let resultList=[];
             for(let i=0;i<rows.length;i++){
                 let temp=Object.assign({},rows[i]);
-                let sgop_images=await pool.query(shopQueries.KSHOPIMAGES({shop_id:temp.shop_id}));
-                let chekFollow=await pool.query(shopQueries.CHECKFOLLOW({user_id:user_id,shop_id:temp.shop_id}));
-                let followCount=await pool.query(shopQueries.COUNTOFFOLLOWERS({shop_id:temp.shop_id}));
-                let productCount=await pool.query(shopQueries.COUNTOFPRODUCTS({shop_id:temp.shop_id}));
+                let sgop_images=await queryExequterWithThenBlock(shopQueries.KSHOPIMAGES({shop_id:temp.shop_id}));
+                let chekFollow=await queryExequterWithThenBlock(shopQueries.CHECKFOLLOW({user_id:user_id,shop_id:temp.shop_id}));
+                let followCount=await queryExequterWithThenBlock(shopQueries.COUNTOFFOLLOWERS({shop_id:temp.shop_id}));
+                let productCount=await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id:temp.shop_id}));
                 Object.assign(temp,{
                     shop_images:sgop_images,
-                    isFollowing:chekFollow,
-                    followCount,
-                    productCount
+                    isFollowing:chekFollow[0].total,
+                    followCount:followCount[0].total,
+                    productCount:productCount[0].total
                 })
                 resultList.push(temp);
             }

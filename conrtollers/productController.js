@@ -20,26 +20,25 @@ var productDetailsFull = async (req, res) => {
     if (p_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    await pool.query(queries.DETAILSFULL({id: p_id}), async (err, rows) => {
-        if (err) {
-            console.log(err);
-            return sender.sendRespondInternalSErr(res, req.lang);
-        }
-        if (rows.length === 0) {
+
+    try{
+        let product=await promiseFunctions.queryExequterWithThenBlock(queries.DETAILSFULL({id: p_id}))
+        if(!product.length){
             return sender.sendNoProductDetails(res, req.lang);
         }
-        await pool.query(queries.PRODUCTSIZE({id: p_id}), (err1, rows1) => {
-            if (err1) {
-                console.log(err1);
-                return sender.sendRespondInternalSErr(res, req.lang);
-            }
-            return sender.sendSuccess(res, {
-                detail: rows[0],
-                sizes: rows1
-            });
+        let sizes=await promiseFunctions.queryExequterWithThenBlock(queries.PRODUCTSIZE({id: p_id}))
+        let productCount=await promiseFunctions.queryExequterWithThenBlock(queries.SHOPPRODUCTCOUNT(product[0].shop_id))
+        let detail=Object.assign({productCount:productCount[0].total},product[0])
+        let images=await promiseFunctions.queryExequterWithThenBlock(queries.PRODUCTIMAGES(p_id))
+        return sender.sendSuccess(res, {
+            detail,
+            sizes,
+            images
         })
-
-    });
+    }catch (err){
+        console.log(err)
+        return sender.sendRespondInternalSErr(res,req.lang)
+    }
 }
 var getAllProducts = async (req, res) => {
     let _params = req.body;
@@ -54,13 +53,13 @@ var getAllProducts = async (req, res) => {
     }
 
     await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCH(_params)).then(async rows => {
-        let total=0;
-        await promiseFunctions.queryExequterWithThenBlock(queries.GETCOUNTOFPRODUCTS({tableName: 'product'})).then(
+        let total = 0;
+        await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCHCOUNT(_params)).then(
             result => {
                 if (result.length)
                     total = result[0].total;
                 else
-                   total = 0
+                    total = 0
             }
         ).catch(err => {
             console.log(err);
@@ -86,9 +85,9 @@ var getAllProducts = async (req, res) => {
                         })
                 }
             }
-            return sender.sendSuccessWithCount(res, rows,total);
+            return sender.sendSuccessWithCount(res, rows, total);
         } else
-            return sender.sendSuccessWithCount(res, rows,total);
+            return sender.sendSuccessWithCount(res, rows, total);
     }).catch(err => {
         console.log(err);
         return sender.sendRespondInternalSErr(res, req.lang);
