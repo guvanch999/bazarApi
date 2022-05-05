@@ -23,8 +23,9 @@ module.exports = {
         console.log(s)
         return s;
     },
-    getServiceShopsWithChecking: async (katalog_id, user_id) => {
-        return await queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({katalog_id: katalog_id})).then(async (rows) => {
+    getServiceShopsWithChecking: async (katalog_id, user_id,page) => {
+        let skip = (page - 1) * 10;
+        return await queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({katalog_id: katalog_id,skip})).then(async (rows) => {
             let resultList = [];
             for (let i = 0; i < rows.length; i++) {
                 let temp = Object.assign({}, rows[i]);
