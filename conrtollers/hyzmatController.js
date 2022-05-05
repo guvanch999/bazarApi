@@ -62,9 +62,22 @@ let getServiceDetail=async (req,res)=>{
     }
     return sender.sendSuccess(res,data)
 }
+let getProductDetail=async (req,res)=>{
+    let product_id=req.params.id;
+    if(!product_id){
+        return sender.sendRespondInternalSErr(res,req.lang);
+    }
+    let data=await queries.getServiceProductDetail(product_id);
+    if(!data){
+        return  sender.sendRespondInvalidParams(res,req.lang);
+    }
+    return sender.sendSuccess(res,data)
+
+}
 module.exports = {
     getServiceKatalogs,
     getServiceShops,
     getServiceProduct,
-    getServiceDetail
+    getServiceDetail,
+    getProductDetail
 }

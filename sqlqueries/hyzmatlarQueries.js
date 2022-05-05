@@ -105,5 +105,18 @@ module.exports = {
                 console.log(err)
                 return false;
             })
+    },
+    async getServiceProductDetail(product_id){
+        return await queryExequterWithThenBlock(shopQueries.GETSERVICEPRODUCTDETAIL(product_id))
+            .then(rows=>{
+                if(rows.length){
+                    return rows[0]
+                } else {
+                    return false
+                }
+            }).catch(err=>{
+                console.log(err)
+                return false;
+            })
     }
 }
