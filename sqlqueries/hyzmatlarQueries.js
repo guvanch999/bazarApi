@@ -44,7 +44,6 @@ module.exports = {
                 resultList.push(temp);
             }
             return resultList;
-
         }).catch(err => {
             console.log(err);
             return false;
