@@ -2,6 +2,7 @@ const pool=require('../db/db');
 const queries=require('../sqlqueries/hyzmatlarQueries');
 const sender=require('../utils/sendRespond');
 
+
 var getServiceKatalogs=async (req,res)=>{
     var id=req.params.id;
     if(id===undefined){
@@ -17,13 +18,16 @@ var getServiceKatalogs=async (req,res)=>{
 }
 
 var getServiceShops=async (req,res)=>{
-    await pool.query(queries.SERVICESHOPS({}),(err,rows)=>{
-        if(err){
-            console.log(err);
-            return sender.sendRespondInternalSErr(res,req.lang);
-        }
-        return sender.sendSuccess(res,rows);
-    })
+    let catalog_id=req.params.catalog_id||null;
+    if(catalog_id==null){
+        return sender.sendRespondInvalidParams(res,req.lang);
+    }
+    let resultRows=await queries.getServiceShopsWithChecking(catalog_id,-1);
+    if(resultRows){
+        return sender.sendSuccess(res,resultRows);
+    } else {
+        return sender.sendRespondInternalSErr(res,req.lang);
+    }
 }
 var getServiceProduct=async (req,res)=>{
     if(!req.url_queries.page){

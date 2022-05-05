@@ -758,6 +758,7 @@ CREATE TABLE `service_shops` (
   `photo` text CHARACTER SET utf8mb4 NOT NULL,
   `description` text CHARACTER SET utf8mb4 NOT NULL,
   `created_date` datetime NOT NULL,
+  `vip`  tinyint(1) NOT NULL DEFAULT '0',
   `modified_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `verify` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
