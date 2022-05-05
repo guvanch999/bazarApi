@@ -19,5 +19,5 @@ module.exports={
     SERVICEDETAILS:`select ss.*,concat(aw.name,' ',a.name) as fullAdress from service_shops ss left join adress a on ss.adress_id=a.id left join adress_welayat aw on a.adress_welayat_id=aw.id where ss.id=`,
     GETSERVICEBANNERS:`select * from service_banner where service_shop_id=`,
     GETVIDIOSFROMSERVICE:'select * from service_videos where service_shop_id=',
-    GETSERVICEPRODUCTDETAIL:(product_id)=>`select sp.*,spp.photo,ss.service_shops_name,ss.phonee,ss.email,ss.photo as service_shop_photo,(select count(*) from service_product spfc where spfc.service_id=${product_id}) as shopProductCount from service_product sp inner join service_shops ss on ss.id=sp.service_id left join service_product_photo spp on sp.id=spp.service_product_id where sp.id=${product_id}`
+    GETSERVICEPRODUCTDETAIL:(product_id)=>`select sp.*,spp.photo,ss.service_shops_name,ss.phonee,ss.email,ss.photo as service_shop_photo,(select count(*) from service_product spfc where spfc.service_id=sp.service_id) as shopProductCount from service_product sp inner join service_shops ss on ss.id=sp.service_id left join service_product_photo spp on sp.id=spp.service_product_id where sp.id=${product_id}`
 }
