@@ -62,7 +62,42 @@ module.exports = {
                 if(data){
                     let listBanners=await queryExequterWithThenBlock(shopQueries.GETSERVICEBANNERS+service_id)
                     let listVideos=await queryExequterWithThenBlock(shopQueries.GETVIDIOSFROMSERVICE+service_id)
-                    return Object.assign(data,{listBanners,listVideos})
+                    let followCount = await queryExequterWithThenBlock(shopQueries.COUNTOFFOLLOWERS({shop_id: service_id}));
+                    let productCount = await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id: service_id}));
+                    let ratings = await queryExequterWithThenBlock(shopQueries.SELECTSERVICESHOPRATINGS({shop_id: service_id}));
+                    let fiveStar=0,fourStar=0,threeStar=0,twoStar=0,oneStar=0,jem=0;
+                    for(let i=0;i<ratings.length;i++){
+                        switch (ratings[i].rating_count){
+                            case 1:{
+                                oneStar++;
+                                jem+=1
+                                break;
+                            }
+                            case 2:{
+                                twoStar++
+                                jem+=2
+                                break;
+                            }
+                            case 3:{
+                                threeStar++;
+                                jem+=3
+                                break;
+                            }
+                            case 4:{
+                                fourStar++;
+                                jem+=4
+                                break;
+                            }
+                            case 5:{
+                                fiveStar+=1
+                                jem+=5
+                                break;
+                            }
+                        }
+                    }
+                    let rating=jem/ratings.length||0;
+                    return Object.assign(data,{totalRatingCount:ratings.length, rating,oneStar,twoStar,threeStar,fourStar,fiveStar,followCount: followCount[0].total,
+                        productCount: productCount[0].total,listBanners,listVideos})
                 } else {
                     return false
                 }
