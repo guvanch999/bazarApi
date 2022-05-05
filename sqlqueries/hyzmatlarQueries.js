@@ -49,6 +49,26 @@ module.exports = {
             console.log(err);
             return false;
         })
-
+    },
+    async getServiceDetail(service_id){
+        return await queryExequterWithThenBlock(shopQueries.SERVICEDETAILS+service_id)
+            .then(rows=>{
+                if(rows.length){
+                    return rows[0]
+                } else {
+                    return  false
+                }
+            }).then(async data=>{
+                if(data){
+                    let listBanners=await queryExequterWithThenBlock(shopQueries.GETSERVICEBANNERS+service_id)
+                    let listVideos=await queryExequterWithThenBlock(shopQueries.GETVIDIOSFROMSERVICE+service_id)
+                    return Object.assign(data,{listBanners,listVideos})
+                } else {
+                    return false
+                }
+            }).catch(err=>{
+                console.log(err)
+                return false;
+            })
     }
 }

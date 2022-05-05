@@ -51,8 +51,20 @@ var getServiceProduct=async (req,res)=>{
         return sender.sendSuccess(res,rows);
     });
 }
+let getServiceDetail=async (req,res)=>{
+    let service_id=req.params.service_id;
+    if(!service_id){
+        return sender.sendRespondInvalidParams(res,req.lang);
+    }
+    let data=await queries.getServiceDetail(service_id);
+    if(!data){
+        return  sender.sendRespondInvalidParams(res,req.lang);
+    }
+    return sender.sendSuccess(res,data)
+}
 module.exports = {
     getServiceKatalogs,
     getServiceShops,
-    getServiceProduct
+    getServiceProduct,
+    getServiceDetail
 }

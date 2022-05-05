@@ -14,4 +14,9 @@ module.exports={
     CHECKFOLLOW:(params)=>`select count(*) as total from follow where user_id=${params.user_id} and service_id=${params.shop_id}`,
     COUNTOFFOLLOWERS:(params)=>`select count(*) as total from follow where service_id=${params.shop_id}`,
     COUNTOFPRODUCTS:(params)=>`select count(*) as total from service_product where service_id=${params.shop_id}`,
+
+
+    SERVICEDETAILS:`select ss.*,concat(aw.name,' ',a.name) as fullAdress from service_shops ss left join adress a on ss.adress_id=a.id left join adress_welayat aw on a.adress_welayat_id=aw.id where ss.id=`,
+    GETSERVICEBANNERS:`select * from service_banner where service_shop_id=`,
+    GETVIDIOSFROMSERVICE:'select * from service_videos where service_shop_id='
 }
