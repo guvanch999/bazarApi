@@ -11,13 +11,13 @@ module.exports = {
         var page = params.page;
         var count = params.count || 18;
         var skip = (page - 1) * count;
-        var s = `select * from service_product where verify=${isUndefined(params.verify)?0:params.verify}`;
+        var s = `select sp.*,spp.photo from service_product sp left join service_product_photo spp on spp.service_product_id=sp.id where sp.verify=${isUndefined(params.verify)?0:params.verify}`;
 
         if (params.serviceID) {
-            s += ` and service_id =${params.serviceID}   `
+            s += ` and sp.service_id =${params.serviceID}   `
         }
         if (params.catalogID) {
-            s += ` and catalog_id =${params.catalogID}  `
+            s += ` and sp.catalog_id =${params.catalogID}  `
         }
         s += " limit " + skip + ", " + count;
         console.log(s)
