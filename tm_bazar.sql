@@ -537,6 +537,14 @@ CREATE TABLE `rating_products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `rating_service_product` (
+  `id` int(10) NOT NULL,
+  `product_id` int(10) NOT NULL,
+  `user_id` int(10) NOT NULL DEFAULT '0',
+  `rating_count` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 
 
@@ -727,6 +735,7 @@ CREATE TABLE `service_product` (
   `price` double DEFAULT NULL,
   `like_num` int(11) DEFAULT NULL,
   `rate` int(11) DEFAULT NULL,
+  `vip` tinyint(1) NOT NULL DEFAULT '0',
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `otkaz` tinyint(1) NOT NULL DEFAULT '0',
   `otkaz_text` text,

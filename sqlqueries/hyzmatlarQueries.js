@@ -1,6 +1,7 @@
 const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
 const shopQueries = require("../sqlqueries/serviceShops");
 const {isUndefined} = require("util");
+const {calculateRating} = require("../utils/useFullFunctions");
 module.exports = {
     SERVICEKATALOGS: (params) => `select * from katalog where bolum_id=${params.id}`,
 
@@ -23,9 +24,12 @@ module.exports = {
         console.log(s)
         return s;
     },
-    getServiceShopsWithChecking: async (katalog_id, user_id,page) => {
+    getServiceShopsWithChecking: async (katalog_id, user_id, page) => {
         let skip = (page - 1) * 10;
-        return await queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({katalog_id: katalog_id,skip})).then(async (rows) => {
+        return await queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({
+            katalog_id: katalog_id,
+            skip
+        })).then(async (rows) => {
             let resultList = [];
             for (let i = 0; i < rows.length; i++) {
                 let temp = Object.assign({}, rows[i]);
@@ -50,71 +54,71 @@ module.exports = {
             return false;
         })
     },
-    async getServiceDetail(service_id){
-        return await queryExequterWithThenBlock(shopQueries.SERVICEDETAILS+service_id)
-            .then(rows=>{
-                if(rows.length){
+    async getServiceDetail(service_id) {
+        return await queryExequterWithThenBlock(shopQueries.SERVICEDETAILS + service_id)
+            .then(rows => {
+                if (rows.length) {
                     return rows[0]
-                } else {
-                    return  false
-                }
-            }).then(async data=>{
-                if(data){
-                    let listBanners=await queryExequterWithThenBlock(shopQueries.GETSERVICEBANNERS+service_id)
-                    let listVideos=await queryExequterWithThenBlock(shopQueries.GETVIDIOSFROMSERVICE+service_id)
-                    let followCount = await queryExequterWithThenBlock(shopQueries.COUNTOFFOLLOWERS({shop_id: service_id}));
-                    let productCount = await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id: service_id}));
-                    let ratings = await queryExequterWithThenBlock(shopQueries.SELECTSERVICESHOPRATINGS({shop_id: service_id}));
-                    let fiveStar=0,fourStar=0,threeStar=0,twoStar=0,oneStar=0,jem=0;
-                    for(let i=0;i<ratings.length;i++){
-                        switch (ratings[i].rating_count){
-                            case 1:{
-                                oneStar++;
-                                jem+=1
-                                break;
-                            }
-                            case 2:{
-                                twoStar++
-                                jem+=2
-                                break;
-                            }
-                            case 3:{
-                                threeStar++;
-                                jem+=3
-                                break;
-                            }
-                            case 4:{
-                                fourStar++;
-                                jem+=4
-                                break;
-                            }
-                            case 5:{
-                                fiveStar+=1
-                                jem+=5
-                                break;
-                            }
-                        }
-                    }
-                    let rating=jem/ratings.length||0;
-                    return Object.assign(data,{totalRatingCount:ratings.length, rating,oneStar,twoStar,threeStar,fourStar,fiveStar,followCount: followCount[0].total,
-                        productCount: productCount[0].total,listBanners,listVideos})
                 } else {
                     return false
                 }
-            }).catch(err=>{
+            }).then(async data => {
+                if (data) {
+                    let listBanners = await queryExequterWithThenBlock(shopQueries.GETSERVICEBANNERS + service_id)
+                    let listVideos = await queryExequterWithThenBlock(shopQueries.GETVIDIOSFROMSERVICE + service_id)
+                    let followCount = await queryExequterWithThenBlock(shopQueries.COUNTOFFOLLOWERS({shop_id: service_id}));
+                    let productCount = await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id: service_id}));
+                    let katalogs = await queryExequterWithThenBlock(shopQueries.GETSERVICESHOPKATALOGDETAIL + service_id);
+                    let ratings = await queryExequterWithThenBlock(shopQueries.SELECTSERVICESHOPRATINGS({shop_id: service_id}));
+                    let rating=calculateRating(ratings)
+                    rating['totalRatingCount']=ratings.length;
+                    data['rating']=rating;
+                    let katalog_name = katalogs.length ? katalogs[0].katalog_name : "";
+                    let katalog_nameru = katalogs.length ? katalogs[0].katalog_nameru : "";
+                    return Object.assign(data, {
+                        followCount: followCount[0].total,
+                        productCount: productCount[0].total,
+                        listBanners,
+                        listVideos,
+                        katalog_name,
+                        katalog_nameru
+                    })
+                } else {
+                    return false
+                }
+            }).catch(err => {
                 console.log(err)
                 return false;
             })
     },
-    async getServiceProductDetail(product_id){
+    async getServiceProductDetail(product_id) {
         return await queryExequterWithThenBlock(shopQueries.GETSERVICEPRODUCTDETAIL(product_id))
-            .then(rows=>{
-                if(rows.length){
+            .then(rows => {
+                if (rows.length) {
                     return rows[0]
                 } else {
                     return false
                 }
-            }).catch(err=>{
+            }).then(async data=>{
+              if(data){
+                  let photos=await queryExequterWithThenBlock(shopQueries.GETSERVICEPRODUCTIMAGES+product_id);
+                  photos=photos.map(x=>x.photo);
+                  return  Object.assign(data,{photos});
+              } else {
+                  return false;
+              }
+            }).then(async (data)=>{
+                if(!data){
+                    return false;
+                } else {
+                    let ratings = await queryExequterWithThenBlock(shopQueries.SELECTSERVICE_PRODUCT_RATINGS({product_id}));
+                    let rating=calculateRating(ratings)
+                    rating['totalRatingCount']=ratings.length;
+                    data['rating']=rating;
+                    return data
+                }
+            })
+            .catch(err => {
                 console.log(err)
                 return false;
             })
