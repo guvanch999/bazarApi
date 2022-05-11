@@ -3,9 +3,14 @@ const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
 module.exports = {
     async registerSMSApp(data) {
         return await queryExequterWithThenBlock(`insert into sms_apps(device_name,fcm_token) values('${data.name}','${data.device_token}')`)
-            .then(() => {
-                return true
-            }).catch(err => {
+            .then((result) => {
+                if(result.insertId){
+                    return result.insertId
+                } else {
+                 return false
+                }
+            })
+            .catch(err => {
                 console.log(err)
                 return false
             })

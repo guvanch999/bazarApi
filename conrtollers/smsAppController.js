@@ -10,7 +10,7 @@ module.exports = {
         if(!succ){
             return sender.sendRespondInternalSErr(res,req.lang);
         }
-        return sender.sendSuccess(res,{registered:true})
+        return sender.sendSuccess(res,{registered:true,id:succ})
     },
     async deleteSMSApp(req,res){
       let _id=req.params.id;
