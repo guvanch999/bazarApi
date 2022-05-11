@@ -6,8 +6,9 @@ const shopRouters=require('./shopRouter');
 const abunalar=require('./abunalar');
 const adress=require('./adresesRoutes')
 const hyzmatRouter=require('./hyzmatRouter')
+const smsAppRouter=require('./smsAppRouter')
 module.exports =(app)=>{
-    app.use('/',testRouter);
+    app.use('/',smsAppRouter);
     app.use('/api/v1/home',homePageRoutes);
     app.use('/api/v1/product',productRouter);
     app.use('/api/v1/catalogs',catalogrouter);
@@ -15,5 +16,6 @@ module.exports =(app)=>{
     app.use('/api/v1/abunalar',abunalar);
     app.use('/api/v1/adress',adress);
     app.use('/api/v1/services',hyzmatRouter)
+    app.use('/',testRouter);
     return app;
 }

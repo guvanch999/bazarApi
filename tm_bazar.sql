@@ -1118,8 +1118,16 @@ CREATE TABLE `zurnal_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+create table sms_apps(
+    id int(10) NOT NULL,
+    device_name text not null,
+    fcm_token text not null
+);
 
+ALTER TABLE `sms_apps`
+  ADD PRIMARY KEY (`id`);
 
+ALTER TABLE sms_apps MODIFY id int NOT NULL AUTO_INCREMENT;
 
 
 ALTER TABLE `adress`
