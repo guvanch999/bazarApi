@@ -1124,10 +1124,22 @@ create table sms_apps(
     fcm_token text not null
 );
 
+create table verif(
+    id int(11) AUTO_INCREMENT primary key,
+    tel text,
+    code text,
+    timee int(11)
+);
+
+
 ALTER TABLE `sms_apps`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE sms_apps MODIFY id int NOT NULL AUTO_INCREMENT;
+
+
+
+
 
 
 ALTER TABLE `adress`
