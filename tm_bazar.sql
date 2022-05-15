@@ -184,7 +184,7 @@ CREATE TABLE `bonus_user` (
 
 CREATE TABLE `brend` (
   `id` int(10) NOT NULL,
-  `bolum_id` int(10) NOT NULL,
+  `katalog_ids`  text NOT NULL,
   `name` varchar(250) NOT NULL,
   `surat` varchar(250) NOT NULL,
   `esasy_sahypa` tinyint(1) NOT NULL DEFAULT '0'

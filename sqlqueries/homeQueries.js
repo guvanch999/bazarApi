@@ -85,5 +85,7 @@ module.exports = {
         console.log(s);
         return s;
     },
-    GETALLBRANDS:(bolum_id)=>`select * from brend ${bolum_id?' where bolum_id ='+bolum_id:''}`
+    GETALLBRANDS:`select * from brend`,
+    GET_IDS_FROM_KATALOG:'select id from katalog where bolum_id=',
+    GET_BRAND_BY_BOLUM_ID:"select * from brend where (katalog_ids like '%,${katalog_id},%') or (katalog_ids like '${katalog_id},%') or (katalog_ids like '%,${katalog_id}')  "
 }

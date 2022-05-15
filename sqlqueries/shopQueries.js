@@ -13,7 +13,7 @@ module.exports = {
     //abuna bn product count lary hasaplap aldyrmaly
     //potpisatsya edileni barlamaly
     KATALOGSHOPS:(params)=>`select s.id as shop_id,s.shop_name,s.photo from shop s inner join shop_katalog sk on sk.shop_id=s.id and sk.katalog_id=${params.katalog_id}`,
-    KSHOPIMAGES:(params)=>`select pp.photo  from product_photo as pp  where pp.shop_id=${params.shop_id} and pp.esasy=1;`,
+    KSHOPIMAGES:(params)=>`select pp.photo  from product_photo as pp  where pp.shop_id=${params.shop_id} and pp.esasy=1 limit 3;`,
     CHECKFOLLOW:(params)=>`select count(*) as total from follow where user_id=${params.user_id} and shop_id=${params.shop_id}`,
     COUNTOFFOLLOWERS:(params)=>`select count(*) as total from follow where shop_id=${params.shop_id}`,
     COUNTOFPRODUCTS:(params)=>`select count(*) as total from product where shop_id=${params.shop_id}`,

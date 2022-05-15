@@ -36,7 +36,7 @@ var getBannerL2 = async (req, res) => {
     if (b_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    return   await pool.query(queries.BANNERL2({id: b_id}), async (err, rows) => {
+    return await pool.query(queries.BANNERL2({id: b_id}), async (err, rows) => {
         if (err) {
             console.log(err);
             return sender.sendRespondInternalSErr(res, req.lang);
@@ -44,9 +44,9 @@ var getBannerL2 = async (req, res) => {
         if (rows.length > 0) {
             return sender.sendSuccess(res, rows);
         } else {
-            return  await pool.query(queries.BANNERL2({id: 0}),(error,response) => {
-                if(error){
-                    return sender.sendRespondInternalSErr(res,req.lang)
+            return await pool.query(queries.BANNERL2({id: 0}), (error, response) => {
+                if (error) {
+                    return sender.sendRespondInternalSErr(res, req.lang)
                 }
                 return sender.sendSuccess(res, response);
             })
@@ -212,19 +212,19 @@ var getBolumler = async (req, res) => {
 }
 var getAdsForHomePage = async (req, res) => {
     let _page = req.url_queries.page || 1;
-    await pool.query(queries.ADSADMINONE({skip: (_page - 1)*2}), async (err, rows) => {
+    await pool.query(queries.ADSADMINONE({skip: (_page - 1) * 2}), async (err, rows) => {
         if (err) {
             console.log(err);
             return sender.sendRespondInternalSErr(res, req.lang);
         }
-        if (rows.length>1) {
-            return await pool.query(queries.ADSFROMSHOPPAGE({ skip: (_page - 1) * 16 }), async (err, result) => {
+        if (rows.length > 1) {
+            return await pool.query(queries.ADSFROMSHOPPAGE({skip: (_page - 1) * 16}), async (err, result) => {
                 if (err) {
                     console.log(err);
                     return sender.sendRespondInternalSErr(res, req.lang);
                 }
-                if (result.length===16) {
-                    rows.forEach(row=>result.unshift(row))
+                if (result.length === 16) {
+                    rows.forEach(row => result.unshift(row))
                     let _temp = []
                     for await (const contents of result.map(row => {
                         if (row.ads_type_id) {
@@ -319,19 +319,34 @@ var getAdsForHomePage = async (req, res) => {
     })
 
 }
-let getAllBrands=async (req,res)=>{
-    let bolum_id=req.params.bolum_id||0;
-    return await promiseFunctions.queryExequterWithThenBlock(queries.GETALLBRANDS(bolum_id))
-        .then(rows=>{
-            return sender.sendSuccess(res,rows)
-        }).catch(err=>{
-            console.log(err)
-            return sender.sendRespondInternalSErr(res,req.lang)
-        })
+let getAllBrands = async (req, res) => {
+    let bolum_id = req.params.bolum_id || 0;
+    console.log(typeof bolum_id)
+    if (!parseInt(bolum_id)) {
+        return await promiseFunctions.queryExequterWithThenBlock(queries.GETALLBRANDS)
+            .then(rows => {
+                return sender.sendSuccess(res, rows)
+            }).catch(err => {
+                console.log(err)
+                return sender.sendRespondInternalSErr(res, req.lang)
+            })
+    } else {
+        return await promiseFunctions.queryExequterWithThenBlock(queries.GET_IDS_FROM_KATALOG + bolum_id)
+            .then(async rows => {
+                let idsArray = rows.map(x => x.id);
+                let brands = await promiseFunctions.queryExequterWithThenBlock(queries.GETALLBRANDS);
+                let selectedBrands = brands.map(x => {
+                    if (x.katalog_ids.split(',').filter(x => idsArray.find(xx => xx === parseInt(x))).length) {
+                        return x
+                    } else return null
+                }).filter(x => x !== null);
+                return sender.sendSuccess(res, selectedBrands)
+            }).catch(err => {
+                console.log(err)
+                return sender.sendRespondInternalSErr(res, req.lang)
+            })
+    }
 }
-
-
-
 
 
 module.exports = {

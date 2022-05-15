@@ -70,9 +70,9 @@ module.exports = {
                     let productCount = await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id: service_id}));
                     let katalogs = await queryExequterWithThenBlock(shopQueries.GETSERVICESHOPKATALOGDETAIL + service_id);
                     let ratings = await queryExequterWithThenBlock(shopQueries.SELECTSERVICESHOPRATINGS({shop_id: service_id}));
-                    let rating=calculateRating(ratings)
-                    rating['totalRatingCount']=ratings.length;
-                    data['rating']=rating;
+                    let rating = calculateRating(ratings)
+                    rating['totalRatingCount'] = ratings.length;
+                    data['rating'] = rating;
                     let katalog_name = katalogs.length ? katalogs[0].katalog_name : "";
                     let katalog_nameru = katalogs.length ? katalogs[0].katalog_nameru : "";
                     return Object.assign(data, {
@@ -99,22 +99,22 @@ module.exports = {
                 } else {
                     return false
                 }
-            }).then(async data=>{
-              if(data){
-                  let photos=await queryExequterWithThenBlock(shopQueries.GETSERVICEPRODUCTIMAGES+product_id);
-                  photos=photos.map(x=>x.photo);
-                  return  Object.assign(data,{photos});
-              } else {
-                  return false;
-              }
-            }).then(async (data)=>{
-                if(!data){
+            }).then(async data => {
+                if (data) {
+                    let photos = await queryExequterWithThenBlock(shopQueries.GETSERVICEPRODUCTIMAGES + product_id);
+                    photos = photos.map(x => x.photo);
+                    return Object.assign(data, {photos});
+                } else {
+                    return false;
+                }
+            }).then(async (data) => {
+                if (!data) {
                     return false;
                 } else {
                     let ratings = await queryExequterWithThenBlock(shopQueries.SELECTSERVICE_PRODUCT_RATINGS({product_id}));
-                    let rating=calculateRating(ratings)
-                    rating['totalRatingCount']=ratings.length;
-                    data['rating']=rating;
+                    let rating = calculateRating(ratings)
+                    rating['totalRatingCount'] = ratings.length;
+                    data['rating'] = rating;
                     return data
                 }
             })
