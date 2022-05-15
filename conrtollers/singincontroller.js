@@ -44,7 +44,7 @@ var PostCode = async (req, res) => {
     const payload = {
         notification: {
             title: _number,
-            body: "Nomer tassyklamak ucin kodunyz: ",
+            body: "Nomer tassyklamak ucin kodunyz: "+sn,
         },
     };
     const options = notification_options;

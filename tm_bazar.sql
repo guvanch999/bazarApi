@@ -1128,7 +1128,7 @@ create table verif(
     id int(11) AUTO_INCREMENT primary key,
     tel text,
     code text,
-    timee unsigned BIGINT
+    timee  BIGINT unsigned
 );
 
 
