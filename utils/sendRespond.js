@@ -1,10 +1,11 @@
 const language = require('./lang');
 
 module.exports = {
-    sendRespondInvalidParams: async (res, lang) => {
+    sendRespondInvalidParams: async (res, lang,errors=null) => {
         return res.status(400).json({
             success: false,
-            message: lang === 'ru' ? language.MsgRuFlags.INVALID_PARAMS : language.MsgTmFlags.INVALID_PARAMS
+            message: lang === 'ru' ? language.MsgRuFlags.INVALID_PARAMS : language.MsgTmFlags.INVALID_PARAMS,
+            errors
         });
     },
     sendRespondInternalSErr: async (res, lang) => {

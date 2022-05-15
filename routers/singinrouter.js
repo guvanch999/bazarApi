@@ -1,6 +1,7 @@
 const router=require('express').Router();
 const controller=require('../conrtollers/singincontroller');
 
+router.post('/login')
 
 router.post('/postcode',controller.PostCode);
 router.post('/verificode',controller.verificationCode);

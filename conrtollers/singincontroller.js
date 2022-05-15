@@ -5,7 +5,8 @@ const webtoken = require('jsonwebtoken');
 const settings = require('../settings/usersettings');
 const admin = require('../utils/firebase-config');
 const {validationResult} = require("express-validator");
-const sender=require('../utils/sendRespond')
+const sender = require('../utils/sendRespond')
+const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
 const notification_options = {
     priority: "high",
     timeToLive: 60 * 60 * 24
@@ -19,32 +20,41 @@ var PostCode = async (req, res) => {
         });
     }
     var sn = "";
-    var registrationToken = "ewOm0PjwRxG5Z8va7mzCJy:APA91bEBguXxAXppCB-QI2P_5U_WCFEYygB92EPiBoP2IfQkz0as-xGvduEtW31iSYyq8yhuXie4t-FAt2LNvQsjZIsW4Mhe2Ft5laDBmHlVJwSoqnSLVBT3qAmpeO9oFojHH45dadBe"
-    // try {
-    //     var result = await pool.query("select fcm_token from sms_apps");
-    //     if (result) {
-    //         registrationToken = result.rows[0].fcm_tocken;
-    //     } else {
-    //         console.log("No sms app registred!");
-    //         return res.status(500).json({
-    //             success: false,
-    //             message: e.MsgTmFlags.INTERNAL_SERVER_ERROR
-    //         })
-    //     }
-    // } catch (err) {
-    //     console.log(err);
-    //     return res.status(500).json({
-    //         success: false,
-    //         message: e.MsgTmFlags.INTERNAL_SERVER_ERROR
-    //     })
-    // }
+    var registrationToken = ""
+    try {
+        let hasToken = await queryExequterWithThenBlock("select fcm_token from sms_apps order by id desc limit 1")
+            .then(rows => {
+                if (rows.length) {
+                    registrationToken = rows[0].fcm_token
+                    return true
+                } else {
+                    return false
+                }
+            }).catch(err => {
+                console.log(err)
+                return false
+            })
+        if (!hasToken) {
+            console.log("No sms app registred!");
+            return res.status(500).json({
+                success: false,
+                message: e.MsgTmFlags.INTERNAL_SERVER_ERROR
+            })
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: e.MsgTmFlags.INTERNAL_SERVER_ERROR
+        })
+    }
     for (var i = 0; i < 5; i++) {
         sn += Math.floor(GETRANDOM());
     }
     const payload = {
         notification: {
             title: _number,
-            body: "Nomer tassyklamak ucin kodunyz: "+sn,
+            body: "Nomer tassyklamak ucin kodunyz: " + sn,
         },
     };
     const options = notification_options;
@@ -96,7 +106,7 @@ var verificationCode = async (req, res) => {
             message: e.MsgTmFlags.INVALID_PARAMS
         });
     }
-    await pool.query(queries.DELETEUPTIMEVERIF+Date.now(), async (err, result) => {
+    await pool.query(queries.DELETEUPTIMEVERIF + Date.now(), async (err, result) => {
         if (err) {
             console.log(err);
             return res.status(500).json({
@@ -104,7 +114,7 @@ var verificationCode = async (req, res) => {
                 msg: e.MsgTmFlags.INTERNAL_SERVER_ERROR
             });
         }
-        await pool.query(queries.CHECKANDVERIFIE+_number, async (err, rows) => {
+        await pool.query(queries.CHECKANDVERIFIE + _number, async (err, rows) => {
             if (err) {
                 console.log(err);
                 return res.status(500).json({
@@ -147,30 +157,43 @@ var finishsingup = async (req, res) => {
         });
     }
     try {
-        await pool.query(queries.DELETENUMBER+_number);
-
-        let result = await pool.query(queries.CREATEUSER, {
-            name: _name,
-            tel: _number,
-            adress_welayat_id,
-            jynsy,
-            register_kod: _fcmtocken
-        });
-
-
-        var token = webtoken.sign({
-                user_id: result.insertId,
-                number: _number
-
-            }, settings.APISECRETKEY,
-            {
-                expiresIn: '1000000h'
-            });
-        return res.status(200).json({
-            success: true,
-            token: token
-        });
-
+        await pool.query(queries.DELETENUMBER + _number);
+       return  await queryExequterWithThenBlock(queries.GET_USER_FOR_LOGIN, _number)
+            .then(async rows => {
+                if (rows.length) {
+                    await pool.query(queries.UPDATEUSER, [{
+                        name: _name,
+                        adress_welayat_id,
+                        jynsy,
+                        register_kod: _fcmtocken
+                    }, rows[0].id])
+                    return rows[0].id
+                } else {
+                    let result = await pool.query(queries.CREATEUSER, {
+                        name: _name,
+                        tel: _number,
+                        adress_welayat_id,
+                        jynsy,
+                        register_kod: _fcmtocken
+                    });
+                    return result.insertId
+                }
+            }).then(user_id => {
+                var token = webtoken.sign({
+                        user_id,
+                        number: _number
+                    }, settings.APISECRETKEY,
+                    {
+                        expiresIn: '1000000h'
+                    });
+                return res.status(200).json({
+                    success: true,
+                    token: token
+                });
+            }).catch(err => {
+                console.log(err)
+                return sender.sendRespondInternalSErr(res,req.lang);
+            })
     } catch (err) {
         console.log(err);
         return res.status(500).json({
@@ -178,30 +201,46 @@ var finishsingup = async (req, res) => {
             message: e.MsgTmFlags.INTERNAL_SERVER_ERROR
         });
     }
-
 }
-let updateUserDatas=async (req,res)=>{
-    const errors=validationResult(req)
-    if(!errors.isEmpty()){
-        return sender.sendRespondInvalidParams(res,req.lang,errors)
+let loginFunction = async (req, res) => {
+
+    let {tel, pass} = req.body;
+    if (!tel || !pass) {
+        return sender.sendRespondInvalidParams(res, req.lang)
     }
-    let userData=req.body;
-    let userId=req.params.id;
-    await pool.query(queries.UPDATEUSER,[userData,userId],(err)=>{
-        if(err){
+    return await queryExequterWithThenBlock(queries.GET_USER_FOR_LOGIN, [tel])
+        .then(rows => {
+            if (rows.length) {
+
+            }
+        }).catch(err => {
             console.log(err)
-            return sender.sendRespondInternalSErr(res,req.lang)
+            return sender.sendRespondInternalSErr(res, req.lang);
+        })
+}
+
+let updateUserDatas = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return sender.sendRespondInvalidParams(res, req.lang, errors)
+    }
+    let userData = req.body;
+    let userId = req.params.id;
+    await pool.query(queries.UPDATEUSER, [userData, userId], (err) => {
+        if (err) {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang)
         }
-        return sender.sendSuccess(res,{updated:true})
+        return sender.sendSuccess(res, {updated: true})
     })
 }
-let getAllUsers=async (req,res)=>{
-    await pool.query(queries.gte_all_users,(err,rows)=>{
-        if(err){
+let getAllUsers = async (req, res) => {
+    await pool.query(queries.gte_all_users, (err, rows) => {
+        if (err) {
             console.log(err)
-            return sender.sendRespondInternalSErr(res,req.lang)
+            return sender.sendRespondInternalSErr(res, req.lang)
         }
-        return sender.sendSuccess(res,rows)
+        return sender.sendSuccess(res, rows)
     })
 }
 

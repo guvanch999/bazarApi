@@ -1,4 +1,5 @@
 const queryExequter = require('../utils/promisiFunctions')
+const {result} = require("../node_modulestemp/lodash/object");
 module.exports = {
     async getAllWelayatlar() {
         return await queryExequter.queryExequterWithThenBlock('select * from adress_welayat')
@@ -24,6 +25,32 @@ module.exports = {
                 return rows
             }).catch(err => {
                 console.log(err)
+                return false
+            })
+    },
+    async createAddressForUser(data) {
+        return await queryExequter.queryExequterWithThenBlock('insert into user_adress set ??', data)
+            .then(rows => {
+                return rows.insertId
+            }).catch(err => {
+                console.log(err)
+                return false;
+            })
+    },
+    async getAllUserAddreses(id) {
+        return await queryExequter.queryExequterWithThenBlock('select * from user_adress where user_id=' + id)
+            .then(rows => {
+                return rows
+            }).catch(err => {
+                console.log(err)
+                return false
+            })
+    },
+    async deleteAddressById(id) {
+        return await queryExequter.queryExequterWithThenBlock(`delete from user_adress where id=${id}`)
+            .then(() => {
+                return true
+            }).catch(err => {
                 return false
             })
     }

@@ -7,5 +7,6 @@ module.exports={
       UPDATEUSER:"update users set ? where id=?;",
       SELECTQUERY:"SELECT * FROM users WHERE tel_no=$1;",
       MAKESENDEDSMS:"UPDATE verifications SET sms_sended='1' where id=$1;",
-      gte_all_users:"select * from users;"
+      gte_all_users:"select * from users;",
+      GET_USER_FOR_LOGIN:`select * from users where tel=?`
 }
