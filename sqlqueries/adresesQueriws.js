@@ -29,7 +29,7 @@ module.exports = {
             })
     },
     async createAddressForUser(data) {
-        return await queryExequter.queryExequterWithThenBlock('insert into user_adress set ??', data)
+        return await queryExequter.queryExequterWithThenBlock('insert into user_adress set ?', [data])
             .then(rows => {
                 return rows.insertId
             }).catch(err => {
@@ -38,7 +38,7 @@ module.exports = {
             })
     },
     async getAllUserAddreses(id) {
-        return await queryExequter.queryExequterWithThenBlock('select * from user_adress where user_id=' + id)
+        return await queryExequter.queryExequterWithThenBlock('select ua.*,a.name as adressname,aw.name as welayatname from user_adress ua inner join adress a on a.id=ua.adress_id inner join adress_welayat aw on aw.id=a.adress_welayat_id where user_id=' + id)
             .then(rows => {
                 return rows
             }).catch(err => {

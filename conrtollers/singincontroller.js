@@ -158,7 +158,7 @@ var finishsingup = async (req, res) => {
     }
     try {
         await pool.query(queries.DELETENUMBER + _number);
-       return  await queryExequterWithThenBlock(queries.GET_USER_FOR_LOGIN, _number)
+        return await queryExequterWithThenBlock(queries.GET_USER_FOR_LOGIN, _number)
             .then(async rows => {
                 if (rows.length) {
                     await pool.query(queries.UPDATEUSER, [{
@@ -192,7 +192,7 @@ var finishsingup = async (req, res) => {
                 });
             }).catch(err => {
                 console.log(err)
-                return sender.sendRespondInternalSErr(res,req.lang);
+                return sender.sendRespondInternalSErr(res, req.lang);
             })
     } catch (err) {
         console.log(err);
@@ -203,15 +203,48 @@ var finishsingup = async (req, res) => {
     }
 }
 let loginFunction = async (req, res) => {
-
-    let {tel, pass} = req.body;
-    if (!tel || !pass) {
+    let {tel, code} = req.body;
+    if (!tel || !code) {
         return sender.sendRespondInvalidParams(res, req.lang)
     }
-    return await queryExequterWithThenBlock(queries.GET_USER_FOR_LOGIN, [tel])
-        .then(rows => {
-            if (rows.length) {
-
+    return await queryExequterWithThenBlock(queries.DELETEUPTIMEVERIF + Date.now())
+        .then(async () => {
+            return await queryExequterWithThenBlock(queries.CHECKANDVERIFIE + tel)
+        }).then(async rows => {
+            if (rows.length === 0) {
+                return false
+            }
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].code === code) {
+                    return true
+                }
+            }
+            return false
+        }).then(async isVerified => {
+            if (!isVerified) {
+                return false;
+            } else {
+                return await queryExequterWithThenBlock(queries.GET_USER_FOR_LOGIN, tel)
+            }
+        }).then(async rows => {
+            if (rows && rows.length) {
+                await pool.query(queries.DELETENUMBER + tel);
+                var token = webtoken.sign({
+                        user_id: rows[0].id,
+                        number: tel
+                    }, settings.APISECRETKEY,
+                    {
+                        expiresIn: '1000000h'
+                    });
+                return res.status(200).json({
+                    success: true,
+                    token: token
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    token: e.MsgTmFlags.INVALID_PARAMS
+                });
             }
         }).catch(err => {
             console.log(err)
@@ -254,5 +287,6 @@ module.exports = {
     verificationCode,
     finishsingup,
     updateUserDatas,
-    getAllUsers
+    getAllUsers,
+    loginFunction
 }

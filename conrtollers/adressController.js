@@ -48,7 +48,7 @@ module.exports = {
         }
         let data = req.body;
         data['user_id'] = req.user.user_id
-        let succ = await queries.createAdress(data)
+        let succ = await queries.createAddressForUser(data)
         if (succ) {
             return sender.sendSuccess(res, {insertId: succ})
         }

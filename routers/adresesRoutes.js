@@ -27,7 +27,7 @@ router.post('/create-address',
         .isLength({min:1})
         .withMessage("Koce 1 harpdan kop bolmaly"),
     controller.createAddressForUser)
-router.delete('/remove-address/:id',controller.deleteAdressForUser)
-
+router.delete('/remove-address/:id',
+    controller.deleteAdressForUser)
 
 module.exports = router;

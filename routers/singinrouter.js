@@ -8,4 +8,5 @@ router.post('/verificode',controller.verificationCode);
 router.post('/finish',controller.finishsingup);
 router.put('/update-user-data/:id',controller.updateUserDatas);
 router.get('/all-users',controller.getAllUsers)
+router.post('/login-verify',controller.loginFunction);
 module.exports=router;
