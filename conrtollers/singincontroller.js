@@ -202,6 +202,31 @@ var finishsingup = async (req, res) => {
         });
     }
 }
+let checkNumberFunction = async (req, res) => {
+    let {tel} = req.body;
+    if (!tel) {
+        return sender.sendRespondInvalidParams(res, req.lang)
+    }
+    return await queryExequterWithThenBlock(queries.GET_USER_FOR_LOGIN, tel)
+        .then(async rows => {
+            if (rows && rows.length) {
+                return res.status(200).json({
+                    success: true,
+                    isRegistred:true
+                });
+            } else {
+                return res.status(200).json({
+                    success: true,
+                    isRegistred:false
+                });
+            }
+        }).catch(err => {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang);
+        })
+}
+
+
 let loginFunction = async (req, res) => {
     let {tel, code} = req.body;
     if (!tel || !code) {
@@ -288,5 +313,6 @@ module.exports = {
     finishsingup,
     updateUserDatas,
     getAllUsers,
-    loginFunction
+    loginFunction,
+    checkNumberFunction
 }
