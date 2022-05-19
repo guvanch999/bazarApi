@@ -169,13 +169,14 @@ var finishsingup = async (req, res) => {
                     }, rows[0].id])
                     return rows[0].id
                 } else {
-                    let result = await pool.query(queries.CREATEUSER, {
+                    let result = await queryExequterWithThenBlock(queries.CREATEUSER, {
                         name: _name,
                         tel: _number,
                         adress_welayat_id,
                         jynsy,
                         register_kod: _fcmtocken
                     });
+                    console.log(result)
                     return result.insertId
                 }
             }).then(user_id => {
@@ -253,6 +254,7 @@ let loginFunction = async (req, res) => {
             }
         }).then(async rows => {
             if (rows && rows.length) {
+                console.log(rows);
                 await pool.query(queries.DELETENUMBER + tel);
                 var token = webtoken.sign({
                         user_id: rows[0].id,
