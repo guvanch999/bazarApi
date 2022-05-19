@@ -6,7 +6,7 @@ router.get('/adsadminl1',controller.getAdsAdmin);
 router.get('/adsfromshopsl1',controller.getAdsFromShops);
 router.get('/bannerl2/:id',controller.getBannerL2);
 router.get('/catalog/:b_id',controller.getCatalogsByBolumId);
-router.get('/vipshopsc  6/:b_id',controller.getVipShopsc6);
+router.get('/vipshopsc6/:b_id',controller.getVipShopsc6);
 router.get('/vipservicesc6',controller.getVipServicesc6);
 
 
