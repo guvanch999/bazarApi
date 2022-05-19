@@ -27,6 +27,23 @@ router.post('/create-address',
         .isLength({min:1})
         .withMessage("Koce 1 harpdan kop bolmaly"),
     controller.createAddressForUser)
+router.put('/update-address/:id',
+    body('name')
+        .trim()
+        .isLength({min:2})
+        .withMessage('Ady 3 harpdan kop bolmaly'),
+    body('phone')
+        .trim()
+        .isLength({min:3})
+        .withMessage("Nomer 3 harpdan kop bolmaly"),
+    body('adress_id')
+        .isNumeric()
+        .withMessage("Adres belgisi nqdogry"),
+    body('adress_koche')
+        .trim()
+        .isLength({min:1})
+        .withMessage("Koce 1 harpdan kop bolmaly"),
+    controller.updateAddressForUser)
 router.delete('/remove-address/:id',
     controller.deleteAdressForUser)
 

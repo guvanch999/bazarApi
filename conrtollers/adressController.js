@@ -54,6 +54,18 @@ module.exports = {
         }
         return sender.sendRespondInternalSErr(res, req.lang)
     },
+    async updateAddressForUser(req, res) {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return sender.sendRespondInvalidParams(res, req.lang, errors);
+        }
+        let data = req.body;
+        let succ = await queries.updateAddressForUser(data,req.params.id)
+        if (succ) {
+            return sender.sendSuccess(res, {insertId: succ})
+        }
+        return sender.sendRespondInternalSErr(res, req.lang)
+    },
     async deleteAdressForUser(req, res) {
         let succ = await queries.deleteAddressById(req.params.id);
         if (succ) {

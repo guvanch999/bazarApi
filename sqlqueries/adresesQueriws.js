@@ -37,6 +37,15 @@ module.exports = {
                 return false;
             })
     },
+    async updateAddressForUser(data,_id) {
+        return await queryExequter.queryExequterWithThenBlock('update user_adress set ? where id=?', [data,_id])
+            .then(() => {
+                return true
+            }).catch(err => {
+                console.log(err)
+                return false;
+            })
+    },
     async getAllUserAddreses(id) {
         return await queryExequter.queryExequterWithThenBlock('select ua.*,a.name as adressname,aw.name as welayatname from user_adress ua inner join adress a on a.id=ua.adress_id inner join adress_welayat aw on aw.id=a.adress_welayat_id where user_id=' + id)
             .then(rows => {
