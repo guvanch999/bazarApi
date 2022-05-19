@@ -583,18 +583,6 @@ CREATE TABLE `reklama_6shops` (
 
 
 
-
-
-CREATE TABLE `restoran_catalog` (
-  `id` int(11) NOT NULL,
-  `catalog_id` int(11) NOT NULL,
-  `restoran_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-
-
 CREATE TABLE `sargytlar` (
   `id` int(11) NOT NULL,
   `shop_id` int(11) NOT NULL,
