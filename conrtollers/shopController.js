@@ -77,7 +77,8 @@ var getShopsWithCckg=async (req,res)=>{
     if(catalog_id==null){
         return sender.sendRespondInvalidParams(res,req.lang);
     }
-    let resultRows=await functionsUSE.getShopsWithChecking(catalog_id,-1);
+    let page=req.url_queries.page||1;
+    let resultRows=await functionsUSE.getShopsWithChecking(catalog_id,req.user.user_id,page);
     if(resultRows){
         return sender.sendSuccess(res,resultRows);
     } else {

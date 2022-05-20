@@ -6,7 +6,7 @@ module.exports = {
     DETAILSFULL: (params) => `select p.*,c.*,s.shop_name,s.photo as shop_photo,s.phones as shop_phones from product p inner join colors c on c.id=p.colors_id inner join shop s on s.id=p.shop_id where p.id=${params.id}`,
     SHOPPRODUCTCOUNT:(shop_id)=>`select count(*) as total from product where id=${shop_id}`,
     PRODUCTIMAGES:(product_id)=>`select * from product_photo where product_id=${product_id}`,
-
+    SELECT_RATING_OF_PRODUCT:`select * from rating_products where product_id=?`,
     PRODUCTSIZE: (params) => `select * from size where product_id=${params.id}`,
 
     //product detailda color maglumatlaryny ugratmaly

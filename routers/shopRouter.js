@@ -1,6 +1,8 @@
 const router=require('express').Router();
 const controller=require('../conrtollers/shopController');
+const authToken=require('../midlwares/authToken')
 
+router.use(authToken.VerifyToken)
 router.get('/shopdetailmini/:id',controller.getShopMiniById)
 router.get('/shopdetailfull/:id',controller.getShopFullById)
 router.get('/shopads/:id',controller.getShopAds);
