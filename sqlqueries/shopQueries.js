@@ -22,5 +22,5 @@ module.exports = {
 
     GET_SHOP_RATING:"select * from rating_shops where shop_id=?",
     BOLUM_SHOPS:(params)=>`select s.* from shop_bolum sb inner join shop s on s.id=sb.shop_id where sb.bolum_id=${params.bolum_id}`,
-    SHOP_LENTA:(params)=>`select * from shop_lenta where shop_id=${params.shop_id} limit ${params.offset}, ${params.limit};`
+    SHOP_LENTA:(params)=>`select sl.*,(select count(*) from lenta_like ll where ll.shop_lenta_id=sl.id) as likeCount from shop_lenta sl where sl.shop_id=${params.shop_id} limit ${params.offset}, ${params.limit};`
 }

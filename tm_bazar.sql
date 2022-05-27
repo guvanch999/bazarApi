@@ -893,13 +893,26 @@ CREATE TABLE `shop_lenta`
     `product_id`    int(11) DEFAULT NULL,
     `created_date`  timestamp NOT NULL              DEFAULT CURRENT_TIMESTAMP,
     `modified_date` date      NOT NULL,
+    `seen`          int(11) not null default '0',
     `verify`        tinyint(1) NOT NULL DEFAULT '0',
     `modified`      tinyint(1) NOT NULL DEFAULT '0',
     `esasy`         tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+alter table shop_lenta add column seen int(11) not null default '0';
 
 
+
+create table lenta_like(
+`id` int(11) not null,
+`shop_lenta_id` int(11) not null,
+`user_id` int(11) not null
+);
+
+ALTER TABLE `lenta_like`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE lenta_like MODIFY id int NOT NULL AUTO_INCREMENT;
 
 CREATE TABLE `shop_subcategory` (
   `id` int(11) NOT NULL,
