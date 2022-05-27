@@ -479,6 +479,7 @@ CREATE TABLE `product` (
   `sold` int(11) DEFAULT NULL,
   `seen` int(11) DEFAULT NULL,
   `likes` int(11) DEFAULT NULL,
+  `vip` tinyint(1) not null default '0',
   `colors_id` int(10) NOT NULL,
   `razmer` tinyint(1) NOT NULL,
   `count` int(11) DEFAULT '5',
@@ -727,6 +728,7 @@ CREATE TABLE `service_product` (
   `like_num` int(11) DEFAULT NULL,
   `rate` int(11) DEFAULT NULL,
   `vip` tinyint(1) NOT NULL DEFAULT '0',
+  `seen` int(11) not null default '0',
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `otkaz` tinyint(1) NOT NULL DEFAULT '0',
   `otkaz_text` text,
@@ -881,19 +883,20 @@ CREATE TABLE `shop_katalog` (
   `shop_katalog_photo` varchar(250) CHARACTER SET utf8 DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
-CREATE TABLE `shop_lenta` (
-  `id` int(11) NOT NULL,
-  `shop_id` int(10) NOT NULL,
-  `description` text CHARACTER SET utf8,
-  `surat` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_date` date NOT NULL,
-  `verify` tinyint(1) NOT NULL DEFAULT '0',
-  `modified` tinyint(1) NOT NULL DEFAULT '0'
+CREATE TABLE `shop_lenta`
+(
+    `id`            int(11) NOT NULL,
+    `shop_id`       int(10) NOT NULL,
+    `name`          text,
+    `description`   text CHARACTER SET utf8,
+    `surat`         varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+    `product_id`    int(11) DEFAULT NULL,
+    `created_date`  timestamp NOT NULL              DEFAULT CURRENT_TIMESTAMP,
+    `modified_date` date      NOT NULL,
+    `verify`        tinyint(1) NOT NULL DEFAULT '0',
+    `modified`      tinyint(1) NOT NULL DEFAULT '0',
+    `esasy`         tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 
 

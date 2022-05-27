@@ -79,7 +79,6 @@ var getAllProducts = async (req, res) => {
                     }))
                         .then(result => {
                             rows[i][table] = result;
-                            console.log(result);
                         })
                         .catch(err => {
                             console.log(err);

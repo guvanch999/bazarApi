@@ -43,6 +43,22 @@ var getShopAds = async (req, res) => {
         return sender.sendSuccess(res, rows);
     })
 }
+var getShopLenta = async (req, res) => {
+    var shop_id = req.params.id;
+    if (shop_id === undefined) {
+        return sender.sendRespondInvalidParams(res, req.lang);
+    }
+    let page=req.url_queries.page||1;
+    let limit=req.url_queries.limit||20;
+    let offset=(page-1)*limit;
+    await pool.query(queries.SHOP_LENTA({shop_id,offset,limit}), (err, rows) => {
+        if (err) {
+            console.log(err);
+            return sender.sendRespondInternalSErr(res, req.lang);
+        }
+        return sender.sendSuccess(res, rows);
+    })
+}
 var getShopBanners = async (req, res) => {
     var shop_id = req.params.id;
     if (shop_id === undefined) {
@@ -141,5 +157,6 @@ module.exports = {
     getShopBanners,
     getShopCatalogs,
     getShopsWithCckg,
-    getBolumShops
+    getBolumShops,
+    getShopLenta
 }

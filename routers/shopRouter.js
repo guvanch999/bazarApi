@@ -6,6 +6,7 @@ router.use(authToken.VerifyToken)
 router.get('/shopdetailmini/:id',controller.getShopMiniById)
 router.get('/shopdetailfull/:id',controller.getShopFullById)
 router.get('/shopads/:id',controller.getShopAds);
+router.get('/shop-lenta/:id',controller.getShopLenta);
 router.get('/shopbanners/:id',controller.getShopBanners)
 router.get('/shopkatalogs/:id',controller.getShopCatalogs);
 

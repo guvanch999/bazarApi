@@ -22,12 +22,5 @@ module.exports = {
 
     GET_SHOP_RATING:"select * from rating_shops where shop_id=?",
     BOLUM_SHOPS:(params)=>`select s.* from shop_bolum sb inner join shop s on s.id=sb.shop_id where sb.bolum_id=${params.bolum_id}`,
-    //shop detailda yyly hasaplatmaly
-    //shop detailda hasaplatmaly zatlar kop
-
-
-
-    //arzanladysh pagede her skidkasy bolan produktly shoplary cykarmaly productlar bilen bile productlar arzanladysh boyuncha sortlanmaly
-    //her dukana girende skidkadaky productlary chykarmaly
-
+    SHOP_LENTA:(params)=>`select * from shop_lenta where shop_id=${params.shop_id} limit ${params.offset}, ${params.limit};`
 }
