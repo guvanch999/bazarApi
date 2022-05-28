@@ -36,12 +36,9 @@ CREATE TABLE `ads_admin` (
   `product_id` int(11) NOT NULL DEFAULT '0',
   `ads_photo` varchar(250) NOT NULL DEFAULT ' ',
   `ads_description` text,
-  `ads_descriptionRU` text
+  `ads_descriptionRU` text,
+  `seen` int(11) not null default '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-
 
 CREATE TABLE `ads_fromshops` (
   `id` int(11) NOT NULL,
@@ -52,8 +49,20 @@ CREATE TABLE `ads_fromshops` (
   `ads_description` text CHARACTER SET utf8,
   `ads_descriptionRU` text NOT NULL,
   `payment` tinyint(1) NOT NULL DEFAULT '0',
-  `verify` tinyint(1) NOT NULL DEFAULT '0'
+  `verify` tinyint(1) NOT NULL DEFAULT '0',
+  `seen` int(11) not null default '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+alter table ads_admin add column seen int(11) not null default '0';
+alter table ads_fromshops add column seen int(11) not null default '0';
+
+create table ads_like(
+id int(11) AUTO_INCREMENT primary key,
+ads_admin_id int(11) not null default '0',
+ads_fromshops_id int not null default '0',
+user_id int(11) not null
+);
+
 
 
 CREATE TABLE `ads_type` (
@@ -803,6 +812,7 @@ CREATE TABLE `shop` (
   `Restoran` tinyint(1) DEFAULT '0',
   `shop_name` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
   `description` text CHARACTER SET utf8mb4 NOT NULL,
+  `descriptionRU`     text CHARACTER SET utf8mb4 NOT NULL,
   `phones` varchar(250) CHARACTER SET utf8mb4 NOT NULL,
   `address_id` int(11) NOT NULL,
   `salgy` varchar(250) NOT NULL,
@@ -824,7 +834,7 @@ CREATE TABLE `shop` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
+alter table shop add column `descriptionRU`  text CHARACTER SET utf8mb4 NOT NULL;
 
 
 CREATE TABLE `shop_banner` (

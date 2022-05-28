@@ -7,11 +7,6 @@ module.exports = {
     FOLLOW_COUNT:"select count(*) as total from follow where shop_id=?",
     SHOPKATALOGS:(params)=>`select k.* from katalog as k inner join shop_katalog as sk on k.id=sk.katalog_id where sk.shop_id=${params.id}`,
 
-
-
-    //su zaprosyn icinde 3 sany product image imageforshop true bolanyny chekmeli gelmeli
-    //abuna bn product count lary hasaplap aldyrmaly
-    //potpisatsya edileni barlamaly
     KATALOGSHOPS:(params)=>`select s.id as shop_id,s.shop_name,s.photo,s.vip from shop s inner join shop_katalog sk on sk.shop_id=s.id and sk.katalog_id=${params.katalog_id} limit ${params.offset},20 `,
     KSHOPIMAGES:(params)=>`select pp.photo  from product_photo as pp  where pp.shop_id=${params.shop_id} and pp.esasy=1 limit 3;`,
     CHECKFOLLOW:(params)=>`select count(*) as total from follow where user_id=${params.user_id} and shop_id=${params.shop_id}`,
