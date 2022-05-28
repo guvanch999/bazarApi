@@ -54,5 +54,6 @@ module.exports = {
     GETCOUNTOFPRODUCTS:(params)=>{
         let getCount=`select count(*) as total from ${params.tableName};`
         return getCount;
-    }
+    },
+    GET_ALL_COLORS:"select * from colors"
 }

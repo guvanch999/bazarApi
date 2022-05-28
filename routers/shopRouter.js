@@ -9,8 +9,8 @@ router.get('/shopads/:id',controller.getShopAds);
 router.get('/shop-lenta/:id',controller.getShopLenta);
 router.get('/shopbanners/:id',controller.getShopBanners)
 router.get('/shopkatalogs/:id',controller.getShopCatalogs);
-
 router.get('/katalogshops/:catalog_id',controller.getShopsWithCckg);
+router.get('/shop-categories',controller.getShopCategories);
 
 router.get('/bolum-shops/:bolum_id',controller.getBolumShops);
 

@@ -99,5 +99,14 @@ var getAllProducts = async (req, res) => {
 module.exports = {
     productDetailsFull,
     productDetailsMini,
-    getAllProducts
+    getAllProducts,
+    async getAllColors(req,res){
+        return await queryExequterWithThenBlock(queries.GET_ALL_COLORS)
+            .then(rows=>{
+                return sender.sendSuccess(res,rows)
+            }).catch(err=>{
+                console.log(err)
+                return sender.sendRespondInternalSErr(res,req.lang)
+            })
+    }
 }

@@ -25,10 +25,10 @@ var getShopFullById = async (req, res) => {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
     let data = await getFullShopDetail(shop_id)
-    if(!data){
-        return sender.sendRespondInternalSErr(res,req.lang)
+    if (!data) {
+        return sender.sendRespondInternalSErr(res, req.lang)
     }
-    return sender.sendSuccess(res,data)
+    return sender.sendSuccess(res, data)
 }
 var getShopAds = async (req, res) => {
     var shop_id = req.params.id;
@@ -48,10 +48,10 @@ var getShopLenta = async (req, res) => {
     if (shop_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    let page=req.url_queries.page||1;
-    let limit=req.url_queries.limit||20;
-    let offset=(page-1)*limit;
-    await pool.query(queries.SHOP_LENTA({shop_id,offset,limit}), (err, rows) => {
+    let page = req.url_queries.page || 1;
+    let limit = req.url_queries.limit || 20;
+    let offset = (page - 1) * limit;
+    await pool.query(queries.SHOP_LENTA({shop_id, offset, limit}), (err, rows) => {
         if (err) {
             console.log(err);
             return sender.sendRespondInternalSErr(res, req.lang);
@@ -128,7 +128,7 @@ async function getFullShopDetail(shop_id) {
             } else {
                 let listBanners = await queryExequterWithThenBlock(queries.SHOPBANNERS, [shop_id])
                 let listVideos = await queryExequterWithThenBlock(queries.SHOP_VIDEOS, [shop_id])
-                let follow = await queryExequterWithThenBlock(queries.FOLLOW_COUNT,[shop_id]);
+                let follow = await queryExequterWithThenBlock(queries.FOLLOW_COUNT, [shop_id]);
                 let product = await queryExequterWithThenBlock(queries.COUNTOFPRODUCTS({shop_id}))
                 let katalogs = await queryExequterWithThenBlock(queries.GET_SHOP_KATALOGS + shop_id);
                 let ratings = await queryExequterWithThenBlock(queries.GET_SHOP_RATING, [shop_id])
@@ -150,6 +150,23 @@ async function getFullShopDetail(shop_id) {
 
 }
 
+async function getShopCategories(shop_id, katalog_id) {
+    return await queryExequterWithThenBlock(queries.GET_SHOP_CATEGORIES,[shop_id,katalog_id])
+        .then(async rows=>{
+            let ids=rows.map(x=>x.id);
+            let subcategories=await queryExequterWithThenBlock(queries.GET_SHOP_SUBCATEGORIES,[shop_id,ids.join(',')])
+            let result=rows.map(data=>{
+                let ss=subcategories.filter(x=>x.category_id===data.id);
+                data['suncategories']=ss;
+                return data;
+            })
+            return result
+        }).catch(err=>{
+            console.log(err)
+            return false
+        })
+}
+
 module.exports = {
     getShopMiniById,
     getShopFullById,
@@ -158,5 +175,17 @@ module.exports = {
     getShopCatalogs,
     getShopsWithCckg,
     getBolumShops,
-    getShopLenta
+    getShopLenta,
+    async getShopCategories(req, res) {
+        let {shop_id, katalog_id} = req.url_queries;
+        if (!shop_id || !katalog_id) {
+            return sender.sendRespondInvalidParams(res, req.lang)
+        }
+        let list=await getShopCategories(shop_id,katalog_id);
+        if(!list){
+            return sender.sendRespondInternalSErr(res,req.lang);
+        }
+        return  sender.sendSuccess(res,list)
+
+    }
 }
