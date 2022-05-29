@@ -165,11 +165,12 @@ CREATE TABLE `bonus` (
   `count` int(11) NOT NULL,
   `ulanysh_duzguni` text NOT NULL,
   `mohleti` datetime NOT NULL,
-  `doredilen_wagty` date NOT NULL
+  `doredilen_wagty` date NOT NULL,
+  `girish_toleg` int(11) not null default '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
+--count >0 llary chekmeli
+--her ulanylanda count-- etmeeli
 
 
 CREATE TABLE `bonus_bank` (
@@ -179,17 +180,19 @@ CREATE TABLE `bonus_bank` (
   `balans` double NOT NULL DEFAULT '0',
   `ulanylan_summa` double NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+--her sargytda balans uytgemeli
 
 
 
 
 CREATE TABLE `bonus_user` (
   `id` int(11) NOT NULL,
-  `bonus_id` int(11) NOT NULL,
+  `shop_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+alter table bonus_user rename
+--sargytlar shu yylyn  girish tolegi yeten bolsa automat birikmeli
 
 
 
@@ -471,6 +474,7 @@ CREATE TABLE `product` (
   `category_id` int(11) NOT NULL,
   `subcategory_id` int(11) NOT NULL,
   `brend_id` int(11) NOT NULL,
+  `bonus` tinyint(1) not null default '1',
   `product_name` varchar(250) NOT NULL,
   `description` text,
   `descriptionRU` varchar(250) DEFAULT NULL,
@@ -499,7 +503,7 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
+alter table product add column bonus int(11) not null default '1';
 
 
 CREATE TABLE `product_photo` (
@@ -521,6 +525,7 @@ CREATE TABLE `promokod` (
   `surat` varchar(250) NOT NULL,
   `pul_mukdary` double NOT NULL DEFAULT '0',
   `ulanysh_duzguni` text,
+  `ulanysh_duzguniRU` text,
   `created_data` date NOT NULL,
   `count` int(11) NOT NULL,
   `srok` date NOT NULL
@@ -537,8 +542,9 @@ CREATE TABLE `promokod_user` (
   `used` tinyint(1) NOT NULL DEFAULT '0',
   `alan_senesi` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
+--bir gezek ulanyp bilyan
+--user birigen wagty follow etmeli
+alter table promokod add column `ulanysh_duzguniRU` text;
 
 
 
@@ -811,6 +817,8 @@ CREATE TABLE `shop` (
   `shop_center_id` int(11) DEFAULT NULL,
   `Restoran` tinyint(1) DEFAULT '0',
   `shop_name` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+  `shortDescription` text CHARACTER SET utf8mb4 NOT NULL,
+  `shortDescriptionRU` text CHARACTER SET utf8mb4 NOT NULL,
   `description` text CHARACTER SET utf8mb4 NOT NULL,
   `descriptionRU`     text CHARACTER SET utf8mb4 NOT NULL,
   `phones` varchar(250) CHARACTER SET utf8mb4 NOT NULL,
@@ -835,7 +843,8 @@ CREATE TABLE `shop` (
 
 
 alter table shop add column `descriptionRU`  text CHARACTER SET utf8mb4 NOT NULL;
-
+alter table shop add column `shortDescription` text CHARACTER SET utf8mb4 NOT NULL;
+alter table shop add column `shortDescriptionRU` text CHARACTER SET utf8mb4 NOT NULL;
 
 CREATE TABLE `shop_banner` (
   `id` int(6) NOT NULL,

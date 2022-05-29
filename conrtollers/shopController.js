@@ -88,12 +88,10 @@ var getShopCatalogs = async (req, res) => {
 
 
 var getShopsWithCckg = async (req, res) => {
-    let catalog_id = req.params.catalog_id || null;
-    if (catalog_id == null) {
-        return sender.sendRespondInvalidParams(res, req.lang);
-    }
+    let catalog_id = req.params.catalog_id || 0;
+    let bolum_id=req.url_queries.bolum_id||0;
     let page = req.url_queries.page || 1;
-    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page);
+    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page,bolum_id);
     if (resultRows) {
         return sender.sendSuccess(res, resultRows);
     } else {

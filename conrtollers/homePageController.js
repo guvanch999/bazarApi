@@ -113,13 +113,19 @@ var getCategoriesByBid = async (req, res) => {
     if (k_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    await pool.query(queries.CATEGORIES({id: k_id}), (err, rows) => {
-        if (err) {
-            console.log(err);
-            return sender.sendRespondInternalSErr(res, req.lang);
-        }
-        return sender.sendSuccess(res, rows);
-    });
+    return await promiseFunctions.queryExequterWithThenBlock(queries.CATEGORIES({id: k_id}))
+        .then(async rows=>{
+            let list=await promiseFunctions.queryExequterWithThenBlock(queries.SUB_BY_CATEGORIESIDS,[k_id]);
+            let result=rows.map(data=>{
+                let ss=list.filter(x=>x.category_id===data.id);
+                data['subcategories']=ss;
+                return data
+            })
+            return sender.sendSuccess(res,result)
+        }).catch(err=>{
+            console.log(err)
+            return sender.sendRespondInternalSErr(res,req.lang)
+        })
 }
 var getSubCategories = async (req, res) => {
     var c_id = req.params.c_id;
