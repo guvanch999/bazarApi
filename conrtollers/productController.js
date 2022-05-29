@@ -32,11 +32,11 @@ var productDetailsFull = async (req, res) => {
         let productCount = await promiseFunctions.queryExequterWithThenBlock(queries.SHOPPRODUCTCOUNT(product[0].shop_id))
         let detail = Object.assign({productCount: productCount[0].total}, product[0])
         let images = await promiseFunctions.queryExequterWithThenBlock(queries.PRODUCTIMAGES(p_id))
-        let ratings = await queryExequterWithThenBlock(queries.SELECT_RATING_OF_PRODUCT,[p_id]);
+        let ratings = await queryExequterWithThenBlock(queries.SELECT_RATING_OF_PRODUCT, [p_id]);
         let rating = calculateRating(ratings)
         rating['totalRatingCount'] = ratings.length;
-        detail=Object.assign(detail,{sizes,images,rating})
-        return sender.sendSuccess(res,detail)
+        detail = Object.assign(detail, {sizes, images, rating})
+        return sender.sendSuccess(res, detail)
     } catch (err) {
         console.log(err)
         return sender.sendRespondInternalSErr(res, req.lang)
@@ -47,52 +47,67 @@ var getAllProducts = async (req, res) => {
     if (_params.verify === undefined) {
         _params.verify = 1;
     }
-    if (_params.offset === undefined) {
-        _params.offset = 0;
+    if (_params.page === undefined) {
+        _params.page = 1;
     }
     if (!_params.limit > 0) {
         _params.limit = 20;
     }
+    _params.offset=(_params.page-1)*20
+    await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCH(_params))
+        .then(async rows => {
+            let total = 0;
+            await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCHCOUNT(_params))
+                .then(result => {
+                        if (result.length)
+                            total = result[0].total;
+                        else
+                            total = 0
+                    }
+                ).catch(err => {
+                    console.log(err);
+                    rows['total'] = null;
+                })
 
-    await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCH(_params)).then(async rows => {
-        let total = 0;
-        await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCHCOUNT(_params)).then(
-            result => {
-                if (result.length)
-                    total = result[0].total;
-                else
-                    total = 0
+            if (req.body.include) {
+                let tables = req.body.include.split(',');
+                for (let i = 0; i < rows.length; i++) {
+                    for (let j = 0; j < tables.length; j++) {
+                        let table = tables[j];
+                        await promiseFunctions.queryExequterWithThenBlock(queries.SELECTSFROMTABLES({
+                            tableName: table,
+                            id: rows[i].id
+                        }))
+                            .then(result => {
+                                rows[i][table] = result;
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                rows[i][table] = null;
+                            })
+                    }
+                }
+
             }
-        ).catch(err => {
-            console.log(err);
-            rows['total'] = null;
-        })
 
-        if (req.body.include) {
-            let tables = req.body.include.split(',');
-            for (let i = 0; i < rows.length; i++) {
-                for (let j = 0; j < tables.length; j++) {
-                    let table = tables[j];
-                    await promiseFunctions.queryExequterWithThenBlock(queries.SELECTSFROMTABLES({
-                        tableName: table,
-                        id: rows[i].id
-                    }))
-                        .then(result => {
-                            rows[i][table] = result;
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            rows[i][table] = null;
-                        })
+            if(req.user.user_id){
+                for(let i=0;i<rows.length;i++){
+                    if(rows[i].bonus){
+                        let bonus=await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT,[rows[i].shop_id,req.user.user_id]);
+                        rows[i]['bonus_prosent']=bonus.length?bonus[0].bonus_prosent:null;
+                    }
+                    if(rows[i].arzanladys){
+                        let arzanladys=await promiseFunctions.queryExequterWithThenBlock(queries.GET_ARZANLADYSH_FOR_PRODUCT,[rows[i].shop_id,req.user.user_id]);
+                        rows[i]['arzanladysh_prosent']=arzanladys.length?arzanladys[0].prosent:null;
+                    }
+
                 }
             }
             return sender.sendSuccessWithCount(res, rows, total);
-        } else
-            return sender.sendSuccessWithCount(res, rows, total);
-    }).catch(err => {
-        console.log(err);
-        return sender.sendRespondInternalSErr(res, req.lang);
-    })
+        }).catch(err => {
+            console.log(err);
+            return sender.sendRespondInternalSErr(res, req.lang);
+        })
 }
 
 
@@ -100,13 +115,13 @@ module.exports = {
     productDetailsFull,
     productDetailsMini,
     getAllProducts,
-    async getAllColors(req,res){
+    async getAllColors(req, res) {
         return await queryExequterWithThenBlock(queries.GET_ALL_COLORS)
-            .then(rows=>{
-                return sender.sendSuccess(res,rows)
-            }).catch(err=>{
+            .then(rows => {
+                return sender.sendSuccess(res, rows)
+            }).catch(err => {
                 console.log(err)
-                return sender.sendRespondInternalSErr(res,req.lang)
+                return sender.sendRespondInternalSErr(res, req.lang)
             })
     }
 }

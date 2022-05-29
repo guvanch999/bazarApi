@@ -157,9 +157,6 @@ INSERT INTO `bolum` (`id`, `bolum_name`, `bolum_nameRU`, `tertip_nomer`, `visibl
 CREATE TABLE `bonus` (
   `id` int(11) NOT NULL,
   `shop_id` int(11) NOT NULL,
-  `katalog_id` int(11) not null default '0',
-  `category_id` int(11) not null default '0',
-  `subcategory_id` int(11) not null default '0',
   `background_photo` varchar(250) NOT NULL,
   `bonus_prosent` int(11) NOT NULL,
   `count` int(11) NOT NULL,
@@ -187,7 +184,7 @@ CREATE TABLE `bonus_bank` (
 
 CREATE TABLE `bonus_user` (
   `id` int(11) NOT NULL,
-  `shop_id` int(11) NOT NULL,
+  `bonus_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1161,7 +1158,7 @@ create table verif(
 ALTER TABLE `sms_apps`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE sms_apps MODIFY id int NOT NULL AUTO_INCREMENT;
+ALTER TABLE arzanladysh_kart_user MODIFY id int NOT NULL AUTO_INCREMENT;
 
 
 
