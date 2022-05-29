@@ -27,7 +27,7 @@ var getServiceShops=async (req,res)=>{
     if(catalog_id==null){
         return sender.sendRespondInvalidParams(res,req.lang);
     }
-    let resultRows=await queries.getServiceShopsWithChecking(catalog_id,-1,page);
+    let resultRows=await queries.getServiceShopsWithChecking(catalog_id,req.user.user_id,page);
     if(resultRows){
         return sender.sendSuccess(res,resultRows);
     } else {
