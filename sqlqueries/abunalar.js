@@ -11,5 +11,7 @@ module.exports={
 
     //abunadan chykmagy isletmeli
     GETFOLLOWFORCHECK:"select * from follow where user_id=$1 and (shop_id=$2 or service_id=$2);",
-    UNFOLLOW:"delete from follow where id=$1 returning id;"
+    UNFOLLOW:"delete from follow where id=?;",
+    GET_FOR_CHECK:(shop_type,shop_id,user_id)=>`select * from follow where user_id=${user_id} and ${shop_type==='SHOP'?'shop_id':'service_id'}=${shop_id}`,
+    FOLLOW:(shop_type,shop_id,user_id)=>`insert into follow(user_id,${shop_type==='SHOP'?'shop_id':'service_id'}) values(${user_id},${shop_id})`,
 }
