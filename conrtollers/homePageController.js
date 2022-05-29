@@ -118,7 +118,9 @@ var getCategoriesByBid = async (req, res) => {
             let list=await promiseFunctions.queryExequterWithThenBlock(queries.SUB_BY_CATEGORIESIDS,[k_id]);
             let result=rows.map(data=>{
                 let ss=list.filter(x=>x.category_id===data.id);
+                data['subCounts']=ss.length;
                 data['subcategories']=ss;
+
                 return data
             })
             return sender.sendSuccess(res,result)
