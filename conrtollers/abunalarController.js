@@ -58,7 +58,24 @@ var unfollowUser = async (req, res) => {
         return sender.sendRespondInternalSErr(res, req.lang);
     })
 }
-
+let typesOfRating = {
+    'SERVICE_SHOP': {
+        tableName: "rating_service_shops",
+        idColumn: "sevice_shop_id"
+    },
+    'SERVICE_PRODUCT': {
+        tableName: "rating_service_product",
+        idColumn: "product_id"
+    },
+    'SHOP': {
+        tableName: "rating_shops",
+        idColumn: "shop_id"
+    },
+    'PRODUCT': {
+        tableName: "rating_products",
+        idColumn: "product_id"
+    }
+}
 
 module.exports = {
     getAllFollows,
@@ -92,5 +109,36 @@ module.exports = {
                     return sender.sendRespondInternalSErr(res, req.lang)
                 }
             )
+    },
+    async addRatingFromMe(req, res) {
+        let {type, rating_count, id} = req.body;
+        if (!type || !typesOfRating[type]) {
+            return sender.sendRespondInvalidParams(res, req.lang, [{msg: "Type error"}]);
+        }
+        if (!rating_count || !id) {
+            return sender.sendRespondInvalidParams(res, req.lang, [{msg: "Rate error"}]);
+        }
+        let user_id = req.user.user_id;
+        if (!user_id) {
+            return res.status(401).json({
+                success: false,
+                message: language.MsgRuFlags.ERROR_TOKEN
+            });
+        }
+        return await queryExequterWithThenBlock(queries.GET_RATING_FOR_CHECK, [typesOfRating[type].tableName, typesOfRating[type].idColumn, id, user_id])
+            .then(async rows => {
+                let objNeed = {user_id, rating_count};
+                objNeed[typesOfRating[type].idColumn] = id;
+                if (rows.length) {
+                    return await queryExequterWithThenBlock(queries.UPDATE_RATING,[typesOfRating[type].tableName,objNeed,rows[0].id])
+                } else {
+                    return await queryExequterWithThenBlock(queries.ADD_RATING, [typesOfRating[type].tableName, objNeed])
+                }
+            }).then(()=>{
+                return sender.sendSuccess(res,{success:true})
+            }).catch(err => {
+                console.log(err)
+                return sender.sendRespondInternalSErr(res, req.lang)
+            })
     }
 }

@@ -172,15 +172,15 @@ CREATE TABLE `bonus` (
 
 CREATE TABLE `bonus_bank` (
   `id` int(11) NOT NULL,
-  `bonus_id` int(11) NOT NULL,
+  `shop_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `balans` double NOT NULL DEFAULT '0',
   `ulanylan_summa` double NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --her sargytda balans uytgemeli
 
-
-
+alter table bonus_bank alter column bonus_id rename = shop_id;
+alter table bonus_bank rename column bonus_id to shop_id;
 
 CREATE TABLE `bonus_user` (
   `id` int(11) NOT NULL,
@@ -529,7 +529,8 @@ CREATE TABLE `promokod` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
+insert into promokod(shop_id,promo_kod,surat,pul_mukdary,ulanysh_duzguni,ulanysh_duzguniRU,created_data,count,srok)
+              values(1,'23423423','image/link',344,'duzgun duzgun','duzgun duzgun',now(),344,now());
 
 
 CREATE TABLE `promokod_user` (
@@ -619,10 +620,11 @@ CREATE TABLE `sargytlar` (
   `kupon_id` int(11) DEFAULT NULL,
   `arzanladysh_id` int(11) DEFAULT NULL,
   `promokod_id` int(11) DEFAULT NULL,
+  `used_from_bonus_bank` double default null,
   `wagty` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+alter table sargytlar add column used_from_bonus_bank double default null;
 
 
 
@@ -630,10 +632,11 @@ CREATE TABLE `sargyt_produkt` (
   `id` int(11) NOT NULL,
   `sargytlar_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
+  `sizes_id` int(11) default null,
   `count` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+alter table sargyt_produkt add column sizes_id int(11) default null;
 
 
 
@@ -925,10 +928,10 @@ create table lenta_like(
 `user_id` int(11) not null
 );
 
-ALTER TABLE `lenta_like`
+ALTER TABLE `bonus_bank`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE lenta_like MODIFY id int NOT NULL AUTO_INCREMENT;
+ALTER TABLE bonus_bank MODIFY id int NOT NULL AUTO_INCREMENT;
 
 CREATE TABLE `shop_subcategory` (
   `id` int(11) NOT NULL,
@@ -1227,9 +1230,9 @@ ALTER TABLE `bonus`
 
 
 ALTER TABLE `bonus_bank`
-  ADD KEY `shops_key` (`bonus_id`),
+  ADD KEY `shops_key` (`shop`),
   ADD KEY `user_idk` (`user_id`);
-
+alter table bonus_bank drop key shops_key;
 
 
 ALTER TABLE `bonus_user`

@@ -89,7 +89,6 @@ var getAllProducts = async (req, res) => {
                 }
 
             }
-
             if(req.user.user_id){
                 for(let i=0;i<rows.length;i++){
                     if(rows[i].bonus){

@@ -14,4 +14,7 @@ module.exports={
     UNFOLLOW:"delete from follow where id=?;",
     GET_FOR_CHECK:(shop_type,shop_id,user_id)=>`select * from follow where user_id=${user_id} and ${shop_type==='SHOP'?'shop_id':'service_id'}=${shop_id}`,
     FOLLOW:(shop_type,shop_id,user_id)=>`insert into follow(user_id,${shop_type==='SHOP'?'shop_id':'service_id'}) values(${user_id},${shop_id})`,
+    ADD_RATING:'insert into ?? set ?;',
+    UPDATE_RATING:"update ?? set ? where id=?",
+    GET_RATING_FOR_CHECK:"select * from ?? where ??=? and user_id=?;"
 }

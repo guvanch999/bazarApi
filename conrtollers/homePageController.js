@@ -71,7 +71,9 @@ var getVipShopsc6 = async (req, res) => {
     if (b_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    await pool.query(queries.SHOPSL2(b_id), (err, rows) => {
+    let {type}=req.url_queries;
+    let isRestoran= type==='SHOP'?0:1;
+    await pool.query(queries.SHOPSL2(b_id,isRestoran), (err, rows) => {
         if (err) {
             console.log(err);
             return sender.sendRespondInternalSErr(res, req.lang);

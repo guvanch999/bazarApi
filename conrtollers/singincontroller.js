@@ -316,5 +316,20 @@ module.exports = {
     updateUserDatas,
     getAllUsers,
     loginFunction,
-    checkNumberFunction
+    checkNumberFunction,
+    async getUserCounts(req,res){
+        if (!req.user.user_id) {
+            return sender.sendRespondInvalidParams(res, req.lang, [{msg: "No token detected"}])
+        }
+        let user_id = req.user.user_id;
+        return  await queryExequterWithThenBlock(queries.GET_ALL_USER_COUNTS,[user_id,user_id,user_id,user_id,user_id])
+            .then(async rows=>{
+                let addressList=await queryExequterWithThenBlock(queries.GET_USER_ADDRESSES,[user_id])
+                rows[0]['addressList']=addressList
+                return sender.sendSuccess(res,rows[0])
+            }).catch(err=>{
+                console.log(err)
+                return sender.sendRespondInternalSErr(res,req.lang)
+            })
+    }
 }
