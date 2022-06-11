@@ -7,7 +7,7 @@ module.exports = {
     SHOPPRODUCTCOUNT:(shop_id)=>`select count(*) as total from product where id=${shop_id}`,
     PRODUCTIMAGES:(product_id)=>`select * from product_photo where product_id=${product_id}`,
     SELECT_RATING_OF_PRODUCT:`select * from rating_products where product_id=?`,
-    PRODUCTSIZE: (params) => `select * from size where product_id=${params.id}`,
+    PRODUCTSIZE: (params) => `select sz.* from size s inner join sizes sz on s.sizes_id=sz.id where s.product_id=${params.id}`,
 
     //product detailda color maglumatlaryny ugratmaly
     GETPRODUCTSBYFILTERANDSEARCH: (params) => {
