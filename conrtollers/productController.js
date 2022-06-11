@@ -35,6 +35,16 @@ var productDetailsFull = async (req, res) => {
         let ratings = await queryExequterWithThenBlock(queries.SELECT_RATING_OF_PRODUCT, [p_id]);
         let rating = calculateRating(ratings)
         rating['totalRatingCount'] = ratings.length;
+        if (req.user.user_id) {
+            if (detail.bonus) {
+                let bonus = await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT, [detail.shop_id, req.user.user_id]);
+                detail['bonus_prosent'] = bonus.length ? bonus[0].bonus_prosent : null;
+            }
+            if (detail.arzanladys) {
+                let arzanladys = await promiseFunctions.queryExequterWithThenBlock(queries.GET_ARZANLADYSH_FOR_PRODUCT, [detail.shop_id, req.user.user_id]);
+                detail['arzanladysh_prosent'] = arzanladys.length ? arzanladys[0].prosent : null;
+            }
+        }
         detail = Object.assign(detail, {sizes, images, rating})
         return sender.sendSuccess(res, detail)
     } catch (err) {
@@ -53,7 +63,7 @@ var getAllProducts = async (req, res) => {
     if (!_params.limit > 0) {
         _params.limit = 20;
     }
-    _params.offset=(_params.page-1)*20
+    _params.offset = (_params.page - 1) * 20
     await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCH(_params))
         .then(async rows => {
             let total = 0;
@@ -89,15 +99,15 @@ var getAllProducts = async (req, res) => {
                 }
 
             }
-            if(req.user.user_id){
-                for(let i=0;i<rows.length;i++){
-                    if(rows[i].bonus){
-                        let bonus=await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT,[rows[i].shop_id,req.user.user_id]);
-                        rows[i]['bonus_prosent']=bonus.length?bonus[0].bonus_prosent:null;
+            if (req.user.user_id) {
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].bonus) {
+                        let bonus = await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT, [rows[i].shop_id, req.user.user_id]);
+                        rows[i]['bonus_prosent'] = bonus.length ? bonus[0].bonus_prosent : null;
                     }
-                    if(rows[i].arzanladys){
-                        let arzanladys=await promiseFunctions.queryExequterWithThenBlock(queries.GET_ARZANLADYSH_FOR_PRODUCT,[rows[i].shop_id,req.user.user_id]);
-                        rows[i]['arzanladysh_prosent']=arzanladys.length?arzanladys[0].prosent:null;
+                    if (rows[i].arzanladys) {
+                        let arzanladys = await promiseFunctions.queryExequterWithThenBlock(queries.GET_ARZANLADYSH_FOR_PRODUCT, [rows[i].shop_id, req.user.user_id]);
+                        rows[i]['arzanladysh_prosent'] = arzanladys.length ? arzanladys[0].prosent : null;
                     }
 
                 }
