@@ -54,7 +54,7 @@ module.exports = {
     },
     GET_PRODUCT_FOR_LIST: () => {
         let s = `select  p.*,c.category_name,c.category_nameRU,s.subcategory_name,s.subcategory_nameRU,col.color_name, sizes.name as sizeName,sp.count,
-                (select pp.photo from product_photo pp where pp.product_id=p.id order by pp.esasy desc limit 1) as product_photo
+                (select pp.photo from product_photo pp where pp.product_id=p.id order by pp.esasy desc limit 1) as productPhoto
                 from sargyt_produkt sp
                 inner join product p on p.id=sp.product_id
                 left join category c on c.id=p.category_id 
