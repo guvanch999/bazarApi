@@ -48,12 +48,13 @@ module.exports = {
             "left join user_adress ua on ua.id=s.user_adress_id "+
             "left join adress a on a.id=ua.adress_id " +
             "left  join adress_welayat aw on a.adress_welayat_id=aw.id "+
-            "inner join sargyt_status ss on ss.id=s.status_id where s.id=? "
+            "inner join sargyt_status ss on ss.id=s.status_id where s.id=? and s.user_id=?"
         console.log(s)
         return s;
     },
     GET_PRODUCT_FOR_LIST: () => {
-        let s = `select  p.*,c.category_name,c.category_nameRU,s.subcategory_name,s.subcategory_nameRU,col.color_name, sizes.name as sizeName,sp.count
+        let s = `select  p.*,c.category_name,c.category_nameRU,s.subcategory_name,s.subcategory_nameRU,col.color_name, sizes.name as sizeName,sp.count,
+                (select pp.photo from product_photo pp where pp.product_id=p.id order by pp.esasy desc limit 1) as product_photo
                 from sargyt_produkt sp
                 inner join product p on p.id=sp.product_id
                 left join category c on c.id=p.category_id 
