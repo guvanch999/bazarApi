@@ -53,6 +53,10 @@ CREATE TABLE `ads_fromshops` (
   `seen` int(11) not null default '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+insert into ads_admin set ads_type_id=1, product_id=1;
+insert into ads_fromshops set ads_type_id=1, product_id=2, ads_description='sdfsdfsdf',
+ads_descriptionRU='sdfsdfsdf';
+
 alter table ads_admin add column seen int(11) not null default '0';
 alter table ads_fromshops add column seen int(11) not null default '0';
 

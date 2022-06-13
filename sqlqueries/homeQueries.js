@@ -87,7 +87,9 @@ module.exports = {
         console.log(s);
         return s;
     },
+
     GETALLBRANDS:`select * from brend`,
     GET_IDS_FROM_KATALOG:'select id from katalog where bolum_id=',
-    GET_BRAND_BY_BOLUM_ID:"select * from brend where (katalog_ids like '%,${katalog_id},%') or (katalog_ids like '${katalog_id},%') or (katalog_ids like '%,${katalog_id}')  "
+    GET_BRAND_BY_BOLUM_ID:"select * from brend where (katalog_ids like '%,${katalog_id},%') or (katalog_ids like '${katalog_id},%') or (katalog_ids like '%,${katalog_id}')  ",
+    GET_PRODUCT_FOR_ADS:'select p.*,(select pp.photo from product_photo pp where pp.product_id=p.id order by pp.esasy desc limit 1 ) as product_photo from product p where p.verify=1 order by p.vip desc limit 18 offset ?;'
 }

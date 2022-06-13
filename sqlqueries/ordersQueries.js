@@ -43,14 +43,17 @@ module.exports = {
         return s
     },
     GET_ORDER_DETAIL_BY_ID:()=>{
-        let s="select sh.shop_name,sh.shortDescription as shopShortDescription,ss.name as status,s.* from sargytlar s " +
+        let s="select sh.photo as shopPhoto,sh.vip, ua.name as userName,ua.phone,ua.adress_koche,concat(aw.name,' / ',a.name) as addresName, sh.shop_name,sh.shortDescription as shopShortDescription,ss.name as status,s.* from sargytlar s " +
             "inner join shop sh on sh.id=s.shop_id " +
-            "inner join sargyt_status ss on ss.id=s.status_id where s.id=? and s.user_id=?"
+            "left join user_adress ua on ua.id=s.user_adress_id "+
+            "left join adress a on a.id=ua.adress_id " +
+            "left  join adress_welayat aw on a.adress_welayat_id=aw.id "+
+            "inner join sargyt_status ss on ss.id=s.status_id where s.id=? "
         console.log(s)
         return s;
     },
     GET_PRODUCT_FOR_LIST: () => {
-        let s = `select p.*,c.category_name,c.category_nameRU,s.subcategory_name,s.subcategory_nameRU,col.color_name, sizes.name as sizeName,sp.count
+        let s = `select  p.*,c.category_name,c.category_nameRU,s.subcategory_name,s.subcategory_nameRU,col.color_name, sizes.name as sizeName,sp.count
                 from sargyt_produkt sp
                 inner join product p on p.id=sp.product_id
                 left join category c on c.id=p.category_id 

@@ -71,9 +71,9 @@ var getVipShopsc6 = async (req, res) => {
     if (b_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    let {type}=req.url_queries;
-    let isRestoran= type==='SHOP'?0:1;
-    await pool.query(queries.SHOPSL2(b_id,isRestoran), (err, rows) => {
+    let {type} = req.url_queries;
+    let isRestoran = type === 'SHOP' ? 0 : 1;
+    await pool.query(queries.SHOPSL2(b_id, isRestoran), (err, rows) => {
         if (err) {
             console.log(err);
             return sender.sendRespondInternalSErr(res, req.lang);
@@ -116,19 +116,19 @@ var getCategoriesByBid = async (req, res) => {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
     return await promiseFunctions.queryExequterWithThenBlock(queries.CATEGORIES({id: k_id}))
-        .then(async rows=>{
-            let list=await promiseFunctions.queryExequterWithThenBlock(queries.SUB_BY_CATEGORIESIDS,[k_id]);
-            let result=rows.map(data=>{
-                let ss=list.filter(x=>x.category_id===data.id);
-                data['subCounts']=ss.length;
-                data['subcategories']=ss;
+        .then(async rows => {
+            let list = await promiseFunctions.queryExequterWithThenBlock(queries.SUB_BY_CATEGORIESIDS, [k_id]);
+            let result = rows.map(data => {
+                let ss = list.filter(x => x.category_id === data.id);
+                data['subCounts'] = ss.length;
+                data['subcategories'] = ss;
 
                 return data
             })
-            return sender.sendSuccess(res,result)
-        }).catch(err=>{
+            return sender.sendSuccess(res, result)
+        }).catch(err => {
             console.log(err)
-            return sender.sendRespondInternalSErr(res,req.lang)
+            return sender.sendRespondInternalSErr(res, req.lang)
         })
 }
 var getSubCategories = async (req, res) => {
@@ -319,7 +319,31 @@ var getAdsForHomePage = async (req, res) => {
 
                     return sender.sendSuccess(res, _temp);
                 } else {
-                    return sender.sendSuccess(res, []);
+                    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
+                        .then(rows => {
+                            console.log(rows)
+                            let result = rows.map(x => {
+                                let data = {
+                                    id: x.id,
+                                    "tertip_nomer": 99999,
+                                    "ads_type_id": 1,
+                                    "product_id": x.id,
+                                    "ads_photo": x.product_photo,
+                                    "ads_description": x.description,
+                                    "ads_descriptionRU": x.descriptionRU,
+                                    "payment": 0,
+                                    "verify": 1,
+                                    "seen": x.seen
+                                }
+                                delete x['product_photo']
+                                data['detail'] = x;
+                                return data
+                            })
+                            return sender.sendSuccess(res, result)
+                        }).catch(err => {
+                            console.log(err)
+                            return sender.sendRespondInternalSErr(res, req.lang)
+                        })
                 }
             })
 
