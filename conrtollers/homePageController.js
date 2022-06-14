@@ -408,7 +408,7 @@ let getProductsAsAds = async (req, res, next) => {
             }
         }).then(rows => {
             let result = rows.map(x => {
-                if (x.fromAdmin) return x;
+              //  if (x.fromAdmin) return x;
                 let data = {
                     id: x.id,
                     "tertip_nomer": 99999,
