@@ -13,6 +13,17 @@ module.exports = {
         }
         return await queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ORDER(productIds))
             .then(async rows => {
+                for(let i=0;i<rows.length;i++) {
+                    let sizeId=productIds.find(x=>x.p_id===rows[i].id);
+                    let sizeModel=null
+                    if(sizeId.s_id){
+                        sizeModel=await queryExequterWithThenBlock(queries.GET_SIZE_BY_ID,[sizeId.s_id])
+                    }
+                    rows[i]['sizeModel']=sizeModel?sizeModel.length?sizeModel[0]:null:null;
+                }
+                return rows
+            })
+            .then(async rows=>{
                 let shopIds = rows.map(x => x.shop_id).filter((x, i, a) => a.indexOf(x) === i);
                 let shopsList = await queryExequterWithThenBlock(queries.GET_SHOPS_OF_PRODUCTS(shopIds))
                 let products = shopsList.map(data => {

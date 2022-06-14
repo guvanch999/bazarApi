@@ -1,11 +1,12 @@
 module.exports = {
     GET_PRODUCT_FOR_ORDER: (productIds) => {
-        let s = `select p.*,c.category_name,c.category_nameRU,s.subcategory_name,s.subcategory_nameRU,col.color_name
+        let s = `select p.*,c.category_name,c.category_nameRU,s.subcategory_name,s.subcategory_nameRU,col.color_name,
+                (select pp.photo from product_photo pp where pp.product_id=p.id order by pp.esasy desc limit 1) as productPhoto
                 from product p 
                 left join category c on c.id=p.category_id 
                 left join subcategory s on s.id=p.subcategory_id 
                 left join colors col on col.id=p.colors_id
-                where p.id in (0,${productIds.join(',')})`;
+                where p.id in (0,${productIds.map(x=>x.p_id).join(',')})`;
         console.log(s)
         return s
     },
@@ -36,7 +37,7 @@ module.exports = {
     ADD_TO_BONUS_BANK:'update bonus_bank set balans=balans+? where shop_id=? and user_id=?',
     DECREESE_BONUSE_BANK:"update bonus_bank set balans=balans-? where shop_id=? and user_id=?",
     GET_MY_ORDERS:()=>{
-        let s = "select s.id,sh.shop_name,sh.shortDescription as shopShortDescription,s.wagty,s.jemi_summa,(select count(*) from sargyt_produkt sp where sp.sargytlar_id=s.id) as productCount,ss.name as status from sargytlar s " +
+        let s = "select sh.photo,sh.vip, s.id,s.sargyt_kody,sh.shop_name,sh.shortDescription as shopShortDescription,s.wagty,s.jemi_summa,(select count(*) from sargyt_produkt sp where sp.sargytlar_id=s.id) as productCount,ss.name as status from sargytlar s " +
             "inner join shop sh on sh.id=s.shop_id " +
             "inner join sargyt_status ss on ss.id=s.status_id where s.user_id=?"
         console.log(s)
@@ -65,4 +66,5 @@ module.exports = {
         console.log(s)
         return s
     },
+    GET_SIZE_BY_ID:'select * from sizes where id=?'
 }
