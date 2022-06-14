@@ -417,7 +417,7 @@ let getProductsAsAds = async (req, res, next) => {
                     "ads_photo": x.product_photo,
                     "ads_description": x.description,
                     "ads_descriptionRU": x.descriptionRU,
-                    "payment": 0,
+                    "payment": 1,
                     "verify": 1,
                     "seen": x.seen
                 }
