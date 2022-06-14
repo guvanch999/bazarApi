@@ -413,30 +413,33 @@ let getProductsAsAds = async (req, res, next) => {
             let result = rows.map( async x => {
                 k=k+1;
                 if (k<=adminadsLen) {
-                    let data=x;
+                    console.log('admin rek',adminadsLen,k);
+                    let dat=x;
                     if (x.ads_type_id==4 || x.ads_type_id==5, x.ads_type_id==6 )
                     {  let product_x=await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_DETAIL_FOR_ADS(x.product_id));
+                        console.log(product_x);
                        delete product_x['product_photo']
-                       data['detail']=product_x;}
-                    return data;
+                       dat['detail']=product_x;}
+                    return dat;
+                } else {
+                    console.log('ad product');
+                    //  if (x.fromAdmin) return x;
+                    let data = {
+                        id: x.id,
+                        "tertip_nomer": 99999,
+                        "ads_type_id": x.bolum_id === 2 ? 4 : x.bolum_id === 3 ? 5 : 6,
+                        "product_id": x.id,
+                        "ads_photo": x.product_photo,
+                        "ads_description": x.description,
+                        "ads_descriptionRU": x.descriptionRU,
+                        "payment": 0,
+                        "verify": 1,
+                        "seen": x.seen
+                    }
+                    delete x['product_photo']
+                    data['detail'] = x;
+                    return data
                 }
-
-              //  if (x.fromAdmin) return x;
-                let data = {
-                    id: x.id,
-                    "tertip_nomer": 99999,
-                    "ads_type_id": x.bolum_id === 2 ? 4 : x.bolum_id === 3 ? 5 : 6,
-                    "product_id": x.id,
-                    "ads_photo": x.product_photo,
-                    "ads_description": x.description,
-                    "ads_descriptionRU": x.descriptionRU,
-                    "payment": 0,
-                    "verify": 1,
-                    "seen": x.seen
-                }
-                delete x['product_photo']
-                data['detail'] = x;
-                return data
             })
             return sender.sendSuccess(res, result)
         })
