@@ -393,6 +393,7 @@ let getProductsAsAds = async (req, res, next) => {
         next()
         return;
     }
+    let adminadsLen=0;
     return await promiseFunctions.queryExequterWithThenBlock(queries.ADSADMINONE({skip: (_page - 1) * 2}))
         .then(async adsAdmin => {
             if (adsAdmin.length === 2) {
@@ -402,12 +403,18 @@ let getProductsAsAds = async (req, res, next) => {
                    // adsAdmin[i].['fromAdmin'] = true
                     list.unshift(adsAdmin[i])
                 }
+            adminadsLen=adsAdmin.length;
                 return list
             } else {
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [18, (_page - 1) * 18])
             }
         }).then(rows => {
+            let k=0;
             let result = rows.map(x => {
+                k=k+1;
+                if (k<=adminadsLen)
+                    return  x;
+
               //  if (x.fromAdmin) return x;
                 let data = {
                     id: x.id,
