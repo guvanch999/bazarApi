@@ -408,12 +408,18 @@ let getProductsAsAds = async (req, res, next) => {
             } else {
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [18, (_page - 1) * 18])
             }
-        }).then(rows => {
+        }).then(  rows => {
             let k=0;
-            let result = rows.map(x => {
+            let result = rows.map( async x => {
                 k=k+1;
-                if (k<=adminadsLen)
-                    return  x;
+                if (k<=adminadsLen) {
+                    let data=x;
+                    if (x.ads_type_id==4 || x.ads_type_id==5, x.ads_type_id==6 )
+                    {  let product_x=await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_DETAIL_FOR_ADS(x.product_id));
+                       delete product_x['product_photo']
+                       data['detail']=product_x;}
+                    return data;
+                }
 
               //  if (x.fromAdmin) return x;
                 let data = {
