@@ -9,7 +9,7 @@ module.exports = {
 
     KATALOGSHOPS: (params) => {
         let bolum=` where s.id in (select sb.shop_id from shop_bolum sb where sb.bolum_id=${params.bolum_id}) `
-        let s = `select s.id as shop_id,s.shop_name,s.photo,s.vip from shop s inner join shop_katalog sk on sk.shop_id=s.id ${params.katalog_id>0?'and sk.katalog_id='+params.katalog_id:''}  ${params.bolum_id>0 && params.katalog_id<=0?bolum:''} limit ${params.offset},20 `;
+        let s = `select s.id as shop_id,s.shop_name,s.shortDescription,s.shortDescriptionRU,s.photo,s.vip from shop s inner join shop_katalog sk on sk.shop_id=s.id ${params.katalog_id>0?'and sk.katalog_id='+params.katalog_id:''}  ${params.bolum_id>0 && params.katalog_id<=0?bolum:''} limit ${params.offset},20 `;
         console.log(s)
         return s;
     },
