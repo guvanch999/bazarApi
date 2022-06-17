@@ -348,7 +348,32 @@ var getAdsForHomePage = async (req, res) => {
             })
 
         } else {
-            return sender.sendSuccess(res, []);
+
+            return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
+                .then(rows => {
+                    console.log(rows)
+                    let result = rows.map(x => {
+                        let data = {
+                            id: x.id,
+                            "tertip_nomer": 99999,
+                            "ads_type_id": 1,
+                            "product_id": x.id,
+                            "ads_photo": x.product_photo,
+                            "ads_description": x.description,
+                            "ads_descriptionRU": x.descriptionRU,
+                            "payment": 0,
+                            "verify": 1,
+                            "seen": x.seen
+                        }
+                        delete x['product_photo']
+                        data['detail'] = x;
+                        return data
+                    })
+                    return sender.sendSuccess(res, result)
+                }).catch(err => {
+                    console.log(err)
+                    return sender.sendRespondInternalSErr(res, req.lang)
+                })
         }
     })
 
