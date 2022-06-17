@@ -32,34 +32,36 @@ let getadsSHopsForSecondPage = async () => {
 
 }
 
-var getShopsWithChecking = async (katalog_id, user_id, page,bolum_id) => {
+var getShopsWithChecking = async (katalog_id, user_id, page, bolum_id) => {
     let offset = (page - 1) * 20;
-    return await queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({katalog_id,bolum_id,offset}))
+    return await queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({katalog_id, bolum_id, offset}))
         .then(async (rows) => {
-        let resultList = [];
-        for (let i = 0; i < rows.length; i++) {
-            let temp = Object.assign({}, rows[i]);
-            let sgop_images = await queryExequterWithThenBlock(shopQueries.KSHOPIMAGES({shop_id: temp.shop_id}));
-            let chekFollow = await queryExequterWithThenBlock(shopQueries.CHECKFOLLOW({
-                user_id: user_id,
-                shop_id: temp.shop_id
-            }));
-            let followCount = await queryExequterWithThenBlock(shopQueries.COUNTOFFOLLOWERS({shop_id: temp.shop_id}));
-            let productCount = await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id: temp.shop_id}));
-            Object.assign(temp, {
-                shop_images: sgop_images,
-                isFollowing: chekFollow[0].total,
-                followCount: followCount[0].total,
-                productCount: productCount[0].total
-            })
-            resultList.push(temp);
-        }
-        return resultList;
+            let resultList = [];
+            console.log(rows)
+            for (let i = 0; i < rows.length; i++) {
+                let temp = Object.assign({}, rows[i]);
+                let sgop_images = await queryExequterWithThenBlock(shopQueries.KSHOPIMAGES({shop_id: temp.shop_id}));
+                let chekFollow = await queryExequterWithThenBlock(shopQueries.CHECKFOLLOW({
+                    user_id: user_id,
+                    shop_id: temp.shop_id
+                }));
+                let followCount = await queryExequterWithThenBlock(shopQueries.COUNTOFFOLLOWERS({shop_id: temp.shop_id}));
+                let productCount = await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id: temp.shop_id}));
+                Object.assign(temp, {
+                    shop_images: sgop_images,
+                    isFollowing: chekFollow[0].total,
+                    followCount: followCount[0].total,
+                    productCount: productCount[0].total
+                })
+                resultList.push(temp);
+            }
+            console.log(resultList)
+            return resultList;
 
-    }).catch(err => {
-        console.log(err);
-        return false;
-    })
+        }).catch(err => {
+            console.log(err);
+            return false;
+        })
 
 }
 module.exports = {
