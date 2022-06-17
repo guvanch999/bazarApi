@@ -130,6 +130,7 @@ async function getFullShopDetail(shop_id) {
                 let product = await queryExequterWithThenBlock(queries.COUNTOFPRODUCTS({shop_id}))
                 let katalogs = await queryExequterWithThenBlock(queries.GET_SHOP_KATALOGS + shop_id);
                 let ratings = await queryExequterWithThenBlock(queries.GET_SHOP_RATING, [shop_id])
+                let address=await queryExequterWithThenBlock(queries.GET_ADDRESS_BY_ID,[shop_id])
                 let rating = calculateRating(ratings)
                 rating['totalRatingCount'] = ratings.length;
                 data['rating'] = rating;
@@ -138,7 +139,8 @@ async function getFullShopDetail(shop_id) {
                     productCount: product[0].total,
                     listBanners,
                     listVideos,
-                    katalogs
+                    katalogs,
+                    address
                 })
             }
         }).catch(err => {

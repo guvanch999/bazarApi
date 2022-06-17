@@ -24,5 +24,6 @@ module.exports = {
     BOLUM_SHOPS: (params) => `select s.* from shop_bolum sb inner join shop s on s.id=sb.shop_id where sb.bolum_id=${params.bolum_id}`,
     SHOP_LENTA: (params) => `select sl.*,(select count(*) from lenta_like ll where ll.shop_lenta_id=sl.id) as likeCount from shop_lenta sl where sl.shop_id=${params.shop_id} limit ${params.offset}, ${params.limit};`,
     GET_SHOP_CATEGORIES: "select c.*  from shop_category sc inner join category c on c.id=sc.category_id where sc.shop_id=? and sc.katalog_id=?;",
-    GET_SHOP_SUBCATEGORIES: 'select s.* from shop_subcategory ss inner join subcategory s on s.id=ss.subcategory_id where ss.shop_id=? and ss.category_id in (0,?)'
+    GET_SHOP_SUBCATEGORIES: 'select s.* from shop_subcategory ss inner join subcategory s on s.id=ss.subcategory_id where ss.shop_id=? and ss.category_id in (0,?)',
+    GET_ADDRESS_BY_ID:`select aw.name as welayatName,a.name as address from adress a inner join adress_welayat aw on aw.id=a.adress_welayat_id where a.id=?`
 }
