@@ -10,6 +10,13 @@ module.exports = {
                 for(let i=0;i<rows.length;i++) {
                     let news_photos=await queryExequterWithThenBlock(queries.GET_NEWS_IMAGES,[rows[i].id])
                     rows[i]["photos"]=news_photos.map(x=>x.photo)
+                    if(rows[i].shop_id){
+                        let shopDetail=await queryExequterWithThenBlock(queries.GET_SHOP_DETAIL,[rows[i].shop_id,rows[i].shop_id]);
+                        rows[i]['shopDetail']=shopDetail[0]
+                    } else {
+                        let shopDetail=await queryExequterWithThenBlock(queries.GET_SERVICE_DETAIL,[rows[i].service_shop_id,rows[i].service_shop_id]);
+                        rows[i]['shopDetail']=shopDetail[0]
+                    }
                 }
                 return sender.sendSuccess(res,rows)
             }).catch(err=>{
