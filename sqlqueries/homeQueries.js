@@ -1,5 +1,5 @@
 module.exports = {
-    GETALLBANNERS: "select * from banner where bolum_id=0  order by id;",
+    GETALLBANNERS: "select * from esasy_sahypa_banner order by id desc;",
     GETALLBOLUMLER: `select * from bolum;`,
 
     //uc sany magazinlary chekdirmeli main_shopsDan

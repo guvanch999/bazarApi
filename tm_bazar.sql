@@ -125,6 +125,18 @@ CREATE TABLE `banner` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `esasy_sahypa_banner` (
+  `id` int(11) NOT NULL,
+  `bolum_id` int(4) NOT NULL,
+  `shop_id` int(11) DEFAULT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `ads_type_id` int(11) NOT NULL,
+  `tertip_nomer` int(4) NOT NULL,
+  `photo` text CHARACTER SET utf8mb4 NOT NULL,
+  `route` varchar(250) CHARACTER SET utf8mb4 DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 
 
