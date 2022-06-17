@@ -134,13 +134,14 @@ async function getFullShopDetail(shop_id) {
                 let rating = calculateRating(ratings)
                 rating['totalRatingCount'] = ratings.length;
                 data['rating'] = rating;
+                let fullAddress=address.length?address[0].address:''
                 return Object.assign(data, {
                     followCount: follow[0].total,
                     productCount: product[0].total,
                     listBanners,
                     listVideos,
                     katalogs,
-                    address
+                    fullAddress
                 })
             }
         }).catch(err => {
