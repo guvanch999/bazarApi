@@ -32,5 +32,11 @@ module.exports = {
             total:total,
             data: data
         });
+    },
+    sendNotRegistered(res){
+        return res.status(401).json({
+            success: false,
+            message: language.MsgRuFlags.ERROR_TOKEN
+        });
     }
 }
