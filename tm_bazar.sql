@@ -1055,8 +1055,8 @@ CREATE TABLE `tazelik` (
   `gorulen_sany` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
+insert into tazelik(shop_id,service_shop_id,name_header,name_headerRU,name,nameRU,description_header,description_headerRU,description,descriptionRU,created_data,gorulen_sany)
+            values (1,0,'name header','name headerRU','name','nameRU','description header','description headerRU','description','descriptionRU',now(),0);
 
 
 CREATE TABLE `tazelik_photo` (

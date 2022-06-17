@@ -9,6 +9,7 @@ const hyzmatRouter = require('./hyzmatRouter')
 const smsAppRouter = require('./smsAppRouter')
 const signINrouter = require('./singinrouter')
 const ordersRoute=require('./ordersRouter')
+const newsRouter=require('./newsController')
 module.exports = (app) => {
     app.use('/', smsAppRouter);
     app.use('/api/v1/home', homePageRoutes);
@@ -20,6 +21,7 @@ module.exports = (app) => {
     app.use('/api/v1/services', hyzmatRouter)
     app.use('/api/v1/user', signINrouter)
     app.use('/api/v1/order',ordersRoute)
+    app.use('/api/v1/third-menu',newsRouter)
     app.use('/', testRouter);
     return app;
 }
