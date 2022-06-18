@@ -9,7 +9,7 @@ module.exports = {
                 s += ` service_shop_id = ${params.service_shop_id}`
             }
         }
-        s+=` limit ${params.offset}, 20`
+        s+=` limit ${params.offset}, ${params.limit}`
         return s;
     },
     GET_NEWS_IMAGES:`select photo from tazelik_photo where tazelik_id=?`,

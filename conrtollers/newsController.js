@@ -4,9 +4,10 @@ const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
 const pool = require("../db/db");
 module.exports = {
     async getAllNews(req, res) {
-        let {page,shop_id,service_shop_id} = req.url_queries;
-        let offset = page ? (page - 1) * 20 : 0;
-        return queryExequterWithThenBlock(queries.GET_ALL_NEWS({offset,shop_id,service_shop_id}))
+        let {page,shop_id,service_shop_id,limit} = req.url_queries;
+        limit=limit||20;
+        let offset = page ? (page - 1) * limit : 0;
+        return queryExequterWithThenBlock(queries.GET_ALL_NEWS({offset,shop_id,service_shop_id,limit}))
             .then(async rows => {
                 for (let i = 0; i < rows.length; i++) {
                     let news_photos = await queryExequterWithThenBlock(queries.GET_NEWS_IMAGES, [rows[i].id])
