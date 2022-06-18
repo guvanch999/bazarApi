@@ -49,6 +49,7 @@ module.exports = {
                     } else {
                         let shopDetail = await queryExequterWithThenBlock(queries.GET_SERVICE_DETAIL, [data.service_shop_id, data.service_shop_id]);
                         data['shopDetail'] = shopDetail
+                        data['shopDetail']['Restoran']=0;
                     }
                     return sender.sendSuccess(res, data)
                 } else {
