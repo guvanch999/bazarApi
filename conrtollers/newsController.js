@@ -232,7 +232,8 @@ module.exports = {
                             shop_id: rows[i].shop_id
                         });
                         let chekFollow = await queryExequterWithThenBlock(tempQuery);
-                        rows[i]['shopDetail']['isFollowing'] = chekFollow[0].total
+
+                        rows[i]['shopDetail']['isFollowing'] = chekFollow[0].total??0
                     }
                 }
                 return sender.sendSuccess(res, rows)
