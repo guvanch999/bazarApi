@@ -407,6 +407,79 @@ let getAllBrands = async (req, res) => {
     }
 }
 
+let likeParams = {
+    admin_ads: {
+        table: 'ads_like',
+        field: 'ads_admin_id'
+    },
+    shop_ads: {
+        table: 'ads_like',
+        field: 'ads_fromshops_id'
+    },
+    product: {
+        table: 'like_products',
+        field: 'product_id',
+        decraseTable:'product',
+        decraseField:'likes'
+    },
+    service_product: {
+        table: 'like_service_product',
+        field: 'service_product_id',
+        decraseTable:'service_product',
+        decraseField:'like_num'
+    },
+    shop_video: {
+        table: 'like_video',
+        field: 'shop_video_id',
+        decraseTable:'shop_videos',
+        decraseField:'like_count'
+    },
+    service_video: {
+        table: 'like_video',
+        field: 'service_video_id',
+        decraseTable:'service_videos',
+        decraseField:'like_count'
+    },
+    lenta: {
+        table: 'lenta_like',
+        field: 'shop_lenta_id',
+        decraseTable:'shop_lenta',
+        decraseField:'like_count'
+    },
+
+}
+let likeAllParams = async (req, res) => {
+    let {id,like}=req.params
+    if(!id || !like || !likeParams[like]){
+        return sender.sendRespondInvalidParams(res,req.lang)
+    }
+    let {user_id}=req.user
+    if(!user_id){
+        return sender.sendNotRegistered(res);
+    }
+    let likePram=likeParams[like];
+    return promiseFunctions.queryExequterWithThenBlock(`select * from ${likePram.table} where user_id=${user_id} and ${likePram.field}=${id}`)
+        .then(async rows=>{
+            if(rows.length){
+                await promiseFunctions.queryExequterWithThenBlock(`delete from ${likePram.table} where id=${rows[0].id}`)
+                return 'UNLIKED'
+            } else {
+                await promiseFunctions.queryExequterWithThenBlock(`insert into ${likePram.table} set user_id=${user_id},${likePram.field}=${id}`)
+                return 'LIKED'
+            }
+        }).then(async status=>{
+            if(status==='LIKED'){
+                await promiseFunctions.queryExequterWithThenBlock(`update ${likePram.decraseTable} set ${likePram.decraseField}= Coalesce(${likePram.decraseField}, 0)+1 where id=${id}`)
+            } else {
+                await promiseFunctions.queryExequterWithThenBlock(`update ${likePram.decraseTable} set ${likePram.decraseField}=Coalesce(${likePram.decraseField}, 0)-1 where id=${id}`)
+            }
+            return sender.sendSuccess(res,{status})
+        }).catch(err=>{
+            console.log(err)
+            return sender.sendRespondInternalSErr(res,req.lang)
+        })
+}
+
 
 module.exports = {
     getAllBanners,
@@ -427,5 +500,6 @@ module.exports = {
     followFunction,
     getBannerler,
     getVipServicesc6,
-    getAllBrands
+    getAllBrands,
+    likeAllParams
 }

@@ -32,9 +32,9 @@ let getadsSHopsForSecondPage = async () => {
 
 }
 
-var getShopsWithChecking = async (katalog_id, user_id, page, bolum_id) => {
-    let offset = (page - 1) * 20;
-    return await queryExequterWithThenBlock(shopQueries.KATALOGSHOPS({katalog_id, bolum_id, offset}))
+var getShopsWithChecking = async (user_id, page,limit,data) => {
+    let offset = (page - 1) * limit;
+    return await queryExequterWithThenBlock(shopQueries.KATALOG_SHOPS_FILTER({katalog_id, bolum_id, offset}))
         .then(async (rows) => {
             let resultList = [];
             console.log(rows)

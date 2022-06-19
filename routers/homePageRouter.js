@@ -1,6 +1,7 @@
 const router=require('express').Router();
 const controller=require('../conrtollers/homePageController');
 const tokenConvertor=require('../midlwares/tokenConverter');
+const auth=require('../midlwares/authToken')
 router.get('/bannersl1',controller.getAllBanners);
 router.get('/adsadminl1',controller.getAdsAdmin);
 router.get('/adsfromshopsl1',controller.getAdsFromShops);
@@ -26,4 +27,7 @@ router.get('/allshops/:b_id',controller.getAllShopsOfBolum);
 router.get('/bolumler',controller.getBolumler);
 router.post('/banners',controller.getBannerler);
 router.get('/adshome',tokenConvertor,controller.getAdsForHomePage)
+router.get('/like/:like/:id',auth.VerifyToken,controller.likeAllParams)
+
+
 module.exports = router;

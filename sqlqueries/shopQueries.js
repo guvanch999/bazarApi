@@ -25,5 +25,11 @@ module.exports = {
     SHOP_LENTA: (params) => `select sl.*,(select count(*) from lenta_like ll where ll.shop_lenta_id=sl.id) as likeCount from shop_lenta sl where sl.shop_id=${params.shop_id} limit ${params.offset}, ${params.limit};`,
     GET_SHOP_CATEGORIES: "select c.*  from shop_category sc inner join category c on c.id=sc.category_id where sc.shop_id=? and sc.katalog_id=?;",
     GET_SHOP_SUBCATEGORIES: 'select s.* from shop_subcategory ss inner join subcategory s on s.id=ss.subcategory_id where ss.shop_id=? and ss.category_id in (0,?)',
-    GET_ADDRESS_BY_ID:`select concat(aw.name,' ',a.name) as address from adress a inner join adress_welayat aw on aw.id=a.adress_welayat_id where a.id=?`
+    GET_ADDRESS_BY_ID:`select concat(aw.name,' ',a.name) as address from adress a inner join adress_welayat aw on aw.id=a.adress_welayat_id where a.id=?`,
+    KATALOG_SHOPS_FILTER: (params) => {
+        let bolum=` where s.id in (select sb.shop_id from shop_bolum sb where sb.bolum_id=${params.bolum_id}) `
+        let s = `select s.id as shop_id,s.shop_name,s.shortDescription,s.shortDescriptionRU,s.photo,s.vip from shop s  ${params.katalog_id>0?' inner join shop_katalog sk on sk.shop_id=s.id and sk.katalog_id='+params.katalog_id:''}  ${params.bolum_id>0 && params.katalog_id<=0?bolum:''} limit ${params.offset},20 `;
+        console.log(s)
+        return s;
+    },
 }

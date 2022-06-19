@@ -91,7 +91,7 @@ var getShopsWithCckg = async (req, res) => {
     let catalog_id = req.params.catalog_id || 0;
     let bolum_id=req.url_queries.bolum_id||0;
     let page = req.url_queries.page || 1;
-    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page,bolum_id);
+    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page,bolum_id,restoran);
     if (resultRows) {
         return sender.sendSuccess(res, resultRows);
     } else {
@@ -112,6 +112,16 @@ let getBolumShops = async (req, res) => {
 
 }
 
+var getShopsWithFilterAndSort = async (req, res) => {
+    let page = req.url_queries.page || 1;
+    let limit=req.url_queries.page || 20
+    let resultRows = await functionsUSE.getShopsWithChecking(req.user.user_id, page,limit,req.body);
+    if (resultRows) {
+        return sender.sendSuccess(res, resultRows);
+    } else {
+        return sender.sendRespondInternalSErr(res, req.lang);
+    }
+}
 async function getFullShopDetail(shop_id) {
     return await queryExequterWithThenBlock(queries.SHOPDETAILSFULL({id: shop_id}))
         .then(rows => {
@@ -177,6 +187,7 @@ module.exports = {
     getShopsWithCckg,
     getBolumShops,
     getShopLenta,
+    getShopsWithFilterAndSort,
     async getShopCategories(req, res) {
         let {shop_id, katalog_id} = req.url_queries;
         if (!shop_id || !katalog_id) {

@@ -929,12 +929,14 @@ CREATE TABLE `shop_lenta`
     `created_date`  timestamp NOT NULL              DEFAULT CURRENT_TIMESTAMP,
     `modified_date` date      NOT NULL,
     `seen`          int(11) not null default '0',
+    `like_count`    int(11) not null default '0',
     `verify`        tinyint(1) NOT NULL DEFAULT '0',
     `modified`      tinyint(1) NOT NULL DEFAULT '0',
     `esasy`         tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table shop_lenta add column seen int(11) not null default '0';
+alter table shop_lenta add column like_count int(11) not null default '0';
 
 
 
