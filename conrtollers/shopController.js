@@ -91,7 +91,7 @@ var getShopsWithCckg = async (req, res) => {
     let catalog_id = req.params.catalog_id || 0;
     let bolum_id=req.url_queries.bolum_id||0;
     let page = req.url_queries.page || 1;
-    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page,bolum_id,restoran);
+    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page,bolum_id);
     if (resultRows) {
         return sender.sendSuccess(res, resultRows);
     } else {
@@ -115,7 +115,19 @@ let getBolumShops = async (req, res) => {
 var getShopsWithFilterAndSort = async (req, res) => {
     let page = req.url_queries.page || 1;
     let limit=req.url_queries.limit || 20
-    let resultRows = await functionsUSE.getShopsWithChecking(req.user.user_id, page,limit,req.body);
+    let shop_type=req.url_queries.shop_type;
+    let resultRows =[];
+    if(shop_type==='SHOP'){
+        resultRows = await functionsUSE.getShopsWithFilter(req.user.user_id, page,limit,req.body,shop_type);
+    } else
+    if(shop_type==='RESTORAN') {
+        resultRows = await functionsUSE.getShopsWithFilter(req.user.user_id, page,limit,req.body,shop_type);
+    } else
+    if(shop_type==='SERVICE'){
+        resultRows=await functionsUSE.getServiceWithFilter(req.user.user_id, page,limit,req.body)
+    } else {
+        return sender.sendRespondInvalidParams(res,req.lang)
+    }
     if (resultRows) {
         return sender.sendSuccess(res, resultRows);
     } else {
