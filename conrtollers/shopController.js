@@ -114,7 +114,7 @@ let getBolumShops = async (req, res) => {
 
 var getShopsWithFilterAndSort = async (req, res) => {
     let page = req.url_queries.page || 1;
-    let limit=req.url_queries.page || 20
+    let limit=req.url_queries.limit || 20
     let resultRows = await functionsUSE.getShopsWithChecking(req.user.user_id, page,limit,req.body);
     if (resultRows) {
         return sender.sendSuccess(res, resultRows);

@@ -32,12 +32,13 @@ let getadsSHopsForSecondPage = async () => {
 
 }
 
-var getShopsWithChecking = async (user_id, page,limit,data) => {
+var getShopsWithChecking = async (user_id, page, limit, data) => {
     let offset = (page - 1) * limit;
-    return await queryExequterWithThenBlock(shopQueries.KATALOG_SHOPS_FILTER({katalog_id, bolum_id, offset}))
+    data['limit'] = limit
+    data['offset'] = offset
+    return await queryExequterWithThenBlock(shopQueries.KATALOG_SHOPS_FILTER(data))
         .then(async (rows) => {
             let resultList = [];
-            console.log(rows)
             for (let i = 0; i < rows.length; i++) {
                 let temp = Object.assign({}, rows[i]);
                 let sgop_images = await queryExequterWithThenBlock(shopQueries.KSHOPIMAGES({shop_id: temp.shop_id}));

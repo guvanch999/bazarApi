@@ -15,8 +15,8 @@ module.exports = {
     GETSERVISESHOPBYID: (params) => `select * from service_shops where id=${params.id}`,
 
     //ads_lary priducd datail bn cekmeli ikinji sahypa; hyzmat id hem gelip biilyar barlamaly is_product bn, {shop yada servese shop ady bn suratyny almaly}, {added date gelmeli}
-    ADSFROMSHOP: "select * from ads_fromshops where checked=1 order by payment,tertip_nomer asc;",
-    ADSFROMSHOPPAGE: (params) => `select * from ads_fromshops where verify=1 order by payment,tertip_nomer asc limit 16 offset ${params.skip};`,
+    ADSFROMSHOP: "select * from ads_fromshops where checked=1 order by tertip_nomer asc;",
+    ADSFROMSHOPPAGE: (params) => `select * from ads_fromshops where verify=1 order by tertip_nomer asc limit 16 offset ${params.skip};`,
 
     SHOPDETAILSPhotoAndname: (params) => `select photo,shop_name,shop_nameRU from shop where id=${params.id}`,
     SERVICESHOPS: (params) => `select photo,service_shops_name,service_shops_nameRU from service_shops where id=${params.id}`,

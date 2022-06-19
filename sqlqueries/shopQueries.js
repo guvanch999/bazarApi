@@ -27,9 +27,11 @@ module.exports = {
     GET_SHOP_SUBCATEGORIES: 'select s.* from shop_subcategory ss inner join subcategory s on s.id=ss.subcategory_id where ss.shop_id=? and ss.category_id in (0,?)',
     GET_ADDRESS_BY_ID:`select concat(aw.name,' ',a.name) as address from adress a inner join adress_welayat aw on aw.id=a.adress_welayat_id where a.id=?`,
     KATALOG_SHOPS_FILTER: (params) => {
-        let bolum=` where s.id in (select sb.shop_id from shop_bolum sb where sb.bolum_id=${params.bolum_id}) `
-        let s = `select s.id as shop_id,s.shop_name,s.shortDescription,s.shortDescriptionRU,s.photo,s.vip from shop s  ${params.katalog_id>0?' inner join shop_katalog sk on sk.shop_id=s.id and sk.katalog_id='+params.katalog_id:''}  ${params.bolum_id>0 && params.katalog_id<=0?bolum:''} limit ${params.offset},20 `;
-        console.log(s)
+        let s = `select id as shop_id,shop_name,shortDescription,shortDescriptionRU,photo,vip from shop where  Restoran=0 `;
+        if(params.address_id){
+            s+=` and address_id=${params.address_id}  `
+        }
+        s+=` limit ${params.offset},${params.limit} `
         return s;
     },
 }

@@ -48,7 +48,6 @@ CREATE TABLE `ads_fromshops` (
   `ads_photo` varchar(250) CHARACTER SET utf8 DEFAULT ' ',
   `ads_description` text CHARACTER SET utf8,
   `ads_descriptionRU` text NOT NULL,
-  `payment` tinyint(1) NOT NULL DEFAULT '0',
   `verify` tinyint(1) NOT NULL DEFAULT '0',
   `seen` int(11) not null default '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
