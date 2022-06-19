@@ -20,6 +20,6 @@ module.exports = {
     GET_USER_FOLLOWS:"select * from follow where user_id=?",
     GET_SHOP_FOR_FOLLOW:'select shop_name,vip,photo from shop where id=?',
     GET_SERVICE_FOR_FOLLOW:'select service_shops_name as shop_name,vip,photo from shop where id=?',
-    SHOP_LENTA: (params) => `select s.shop_name,s.photo as shopPhoto,s.vip,sl.*,(select count(*) from lenta_like ll   where ll.shop_lenta_id=sl.id) as likeCount from shop_lenta sl inner join shop s on s.id=sl.shop_id where sl.shop_id in (select shop_id from follow where shop_id>0 and user_id=?) limit ${params.offset}, ${params.limit};`,
+    SHOP_LENTA: (params) => `select s.shop_name,s.photo as shopPhoto,s.vip,sl.* from shop_lenta sl inner join shop s on s.id=sl.shop_id where sl.shop_id in (select shop_id from follow where shop_id>0 and user_id=?) limit ${params.offset}, ${params.limit};`,
 
 }
