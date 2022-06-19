@@ -8,4 +8,6 @@ router.get('/detail/:id',controller.getNewsById)
 router.get('/my-follows',auth.VerifyToken,controller.getMyFollowShops)
 router.get('/my-follow-lenta',auth.VerifyToken,controller.getShopLentas)
 
+router.get('/all-videos',controller.getAllVideos)
+
 module.exports = router

@@ -806,22 +806,6 @@ CREATE TABLE `service_shop_top3_product` (
 
 
 
-CREATE TABLE `service_videos` (
-  `id` int(11) NOT NULL,
-  `service_shop_id` int(11) NOT NULL,
-  `video` varchar(250) NOT NULL,
-  `fon_photo` varchar(250) NOT NULL,
-  `name` varchar(250) NOT NULL,
-  `description` text NOT NULL,
-  `nameRU` varchar(250) DEFAULT NULL,
-  `descriptionRU` text,
-  `like_count` int(11) NOT NULL,
-  `goren_sany` int(11) DEFAULT NULL,
-  `created_date` date NOT NULL,
-  `verify` tinyint(1) NOT NULL DEFAULT '0',
-  `otkaz` tinyint(1) NOT NULL DEFAULT '0',
-  `otkaz_text` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -990,7 +974,28 @@ CREATE TABLE `shop_videos` (
   `otkaz_text` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `service_videos` (
+  `id` int(11) NOT NULL,
+  `service_shop_id` int(11) NOT NULL,
+  `video` varchar(250) NOT NULL,
+  `fon_photo` varchar(250) NOT NULL,
+  `name` varchar(250) NOT NULL,
+  `description` text NOT NULL,
+  `nameRU` varchar(250) DEFAULT NULL,
+  `descriptionRU` text,
+  `like_count` int(11) NOT NULL,
+  `goren_sany` int(11) DEFAULT NULL,
+  `created_date` date NOT NULL,
+  `verify` tinyint(1) NOT NULL DEFAULT '0',
+  `otkaz` tinyint(1) NOT NULL DEFAULT '0',
+  `otkaz_text` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+select * from (
+    (select 'SHOP' as type, sv.* from shop_videos sv )
+    union all
+    (select 'SERVICE' as type,  sev.* from service_videos sev)
+) results;
 
 
 

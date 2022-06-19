@@ -70,6 +70,7 @@ module.exports = {
         }
         return await queryExequterWithThenBlock(queries.GET_USER_FOLLOWS, [user_id])
             .then(async rows => {
+
                 for (let i = 0; i < rows.length; i++) {
                     if (rows[i].shop_id) {
                         let detail = await queryExequterWithThenBlock(queries.GET_SHOP_FOR_FOLLOW, [rows[i].shop_id])
@@ -108,6 +109,20 @@ module.exports = {
             }).catch(err => {
                 console.log(err)
                 return sender.sendRespondInternalSErr(res, req.lang)
+            })
+    },
+    async getAllVideos(req,res){
+        return await queryExequterWithThenBlock(queries.GET_ALL_VIDEOS)
+            .then(async rows=>{
+                for(let i=0;i<rows.length;i++){
+                    if(rows[i].type==='SHOP'){
+                        
+                    }
+                }
+                return sender.sendSuccess(res,rows)
+            }).catch(err=>{
+                console.log(err)
+                return sender.sendRespondInternalSErr(res,req.lang)
             })
     }
 }

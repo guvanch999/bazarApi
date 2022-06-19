@@ -63,7 +63,6 @@ var getAllProducts = async (req, res) => {
     if (!_params.limit > 0) {
         _params.limit = 20;
     }
-    console.log(req.user)
     _params.offset = (_params.page - 1) * 20
     await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCH(_params))
         .then(async rows => {

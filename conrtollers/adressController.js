@@ -47,7 +47,6 @@ module.exports = {
             return sender.sendRespondInvalidParams(res, req.lang, errors);
         }
         let data = req.body;
-        console.log(req.user)
         data['user_id'] = req.user.user_id
         let succ = await queries.createAddressForUser(data)
         if (succ) {

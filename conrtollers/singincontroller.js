@@ -176,7 +176,6 @@ var finishsingup = async (req, res) => {
                         jynsy,
                         register_kod: _fcmtocken
                     });
-                    console.log(result)
                     return result.insertId
                 }
             }).then(user_id => {
@@ -254,7 +253,6 @@ let loginFunction = async (req, res) => {
             }
         }).then(async rows => {
             if (rows && rows.length) {
-                console.log(rows);
                 await pool.query(queries.DELETENUMBER + tel);
                 var token = webtoken.sign({
                         user_id: rows[0].id,

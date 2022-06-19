@@ -150,7 +150,6 @@ module.exports = {
         let products = req.body.products
         delete data['products'];
         data['user_id'] = user_id;
-        console.log(new Date().toISOString().slice(0, 19).replace('T', ' '))
         data['wagty'] = new Date().toISOString().slice(0, 19).replace('T', ' ')
         data['sargyt_kody'] = Date.now()
         return await queryExequterWithThenBlock(queries.MAKE_ORDER, [data])
@@ -184,10 +183,10 @@ module.exports = {
             return sender.sendRespondInvalidParams(res, req.lang, [{msg: "No token detected"}])
         }
         let user_id = req.user.user_id;
-        console.log('before')
+
         return await queryExequterWithThenBlock(queries.GET_MY_ORDERS(), [user_id])
             .then(rows => {
-                console.log(rows)
+
                 return sender.sendSuccess(res, rows)
             }).catch(err => {
                 console.log(err)

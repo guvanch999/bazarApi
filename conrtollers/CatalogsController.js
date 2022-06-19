@@ -24,7 +24,6 @@ var getAllCatalogs=async (req,res)=>{
     let _params=req.url_queries;
 
         _params.verify=_params.verify==='0'?0:1;
-    console.log(_params);
 
     await promiseExecuter.queryExequterWithThenBlock(queries.GETCATALOGSWITHFILTER(_params)).then(async  (rows)=>{
         let _includes=[];

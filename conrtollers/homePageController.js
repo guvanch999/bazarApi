@@ -321,7 +321,7 @@ var getAdsForHomePage = async (req, res) => {
                 } else {
                     return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
                         .then(rows => {
-                            console.log(rows)
+
                             let result = rows.map(x => {
                                 let data = {
                                     id: x.id,
@@ -351,7 +351,7 @@ var getAdsForHomePage = async (req, res) => {
 
             return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
                 .then(rows => {
-                    console.log(rows)
+
                     let result = rows.map(x => {
                         let data = {
                             id: x.id,
@@ -380,7 +380,6 @@ var getAdsForHomePage = async (req, res) => {
 }
 let getAllBrands = async (req, res) => {
     let bolum_id = req.params.bolum_id || 0;
-    console.log(typeof bolum_id)
     if (!parseInt(bolum_id)) {
         return await promiseFunctions.queryExequterWithThenBlock(queries.GETALLBRANDS)
             .then(rows => {
