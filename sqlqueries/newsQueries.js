@@ -30,4 +30,14 @@ module.exports = {
     GET_SHOP_DETAIL_FOR_VIDEO:"select shop_name,photo,vip,Restoran from shop where id=?",
     GET_SERVICE_DETAIL_FOR_VIDEO:"select service_shops_name as shop_name,photo,vip from service_shops where id=?",
 
+
+    GET_SAYLANAN_LIST:'select s.*, (select count(*) from saylanan_items si where si.saylanan_id=s.id) as productCount from saylanan s limit ?,?',
+    GET_SAYLANAN_ITEMS_PRODUCT:'select * from product where verify=1 and id in (select product_id from saylanan_items where saylanan_id=?) limit ?,?',
+    SELECTSFROMTABLES:(params)=>{
+        let s=`select * from ${params.tableName} where product_id=${params.id};`
+        console.log(s);
+        return s;
+    },
+    GET_BONUS_FOR_PRODUCT:'select b.* from bonus_user bu inner join bonus b on b.id=bu.bonus_id and b.shop_id=? where bu.user_id=?',
+    GET_ARZANLADYSH_FOR_PRODUCT:'select ak.* from arzanladysh_kart_user au inner join arzanladysh_kart ak on ak.id=au.arzanladysh_id and ak.shop_id=? where au.user_id=? and au.status=1'
 }

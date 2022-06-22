@@ -682,7 +682,8 @@ CREATE TABLE `saylanan` (
   `photo` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+insert into saylanan(header_text,header_textRU,label_text,label_textRU,photo)
+values('Header text','Header text RU','Label text','Label text RU','url/link');
 
 
 
