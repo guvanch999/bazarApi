@@ -212,7 +212,7 @@ module.exports = {
         limit = limit || 20;
         let offset = (page - 1) * limit;
         let {user_id} = req.user
-        return await queryExequterWithThenBlock(queries.GET_LIST_OF_ZIRNAL, [offset, limit])
+        return await queryExequterWithThenBlock(queries.GET_LIST_OF_TOPLANAN, [offset, limit])
             .then(async rows => {
                 for (let i = 0; i < rows.length; i++) {
 
