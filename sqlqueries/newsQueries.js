@@ -39,5 +39,9 @@ module.exports = {
         return s;
     },
     GET_BONUS_FOR_PRODUCT:'select b.* from bonus_user bu inner join bonus b on b.id=bu.bonus_id and b.shop_id=? where bu.user_id=?',
-    GET_ARZANLADYSH_FOR_PRODUCT:'select ak.* from arzanladysh_kart_user au inner join arzanladysh_kart ak on ak.id=au.arzanladysh_id and ak.shop_id=? where au.user_id=? and au.status=1'
+    GET_ARZANLADYSH_FOR_PRODUCT:'select ak.* from arzanladysh_kart_user au inner join arzanladysh_kart ak on ak.id=au.arzanladysh_id and ak.shop_id=? where au.user_id=? and au.status=1',
+
+    GET_LIST_OF_TOPLANAN:'select c.*,(select count(*) from collection_items ci where ci.collection_id=c.id) as productCount from collections c limit ?, ?',
+    GET_TOPLANAN_ITEMS_PRODUCT:'select * from product where verify=1 and id in (select product_id from collection_items where collection_id=?) limit ?,?',
+
 }

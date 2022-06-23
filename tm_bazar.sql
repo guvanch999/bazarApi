@@ -261,7 +261,8 @@ CREATE TABLE `collections` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
+insert into collections(collection_name,collection_nameRU,shop_id,collection_photo,description,descriptionRU,visible)
+values ('collection_name','collection_nameRU',1,'collection_photo/link','description','descriptionRU',1);
 
 
 CREATE TABLE `collection_items` (
@@ -516,6 +517,12 @@ CREATE TABLE `product` (
 
 
 alter table product add column bonus int(11) not null default '1';
+create table products_type(
+id int(11) not null,
+type varchar(255) default null
+)
+
+
 
 
 CREATE TABLE `product_photo` (
@@ -1151,7 +1158,8 @@ CREATE TABLE `zurnal` (
   `our_name` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+insert into zurnal(name,nameRU,photo,shop_id,our_logo,our_name)
+values('name','nameRU','photo/link',1,'photo/link','photo/link');
 
 
 
@@ -1181,11 +1189,11 @@ create table verif(
 );
 
 
-ALTER TABLE `sms_apps`
+ALTER TABLE `products_type`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE arzanladysh_kart_user MODIFY id int NOT NULL AUTO_INCREMENT;
-
+ALTER TABLE products_type MODIFY id int NOT NULL AUTO_INCREMENT;
+insert into products_type(type) values('Fation'),('Service'),('Restoran');
 
 
 
