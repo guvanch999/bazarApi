@@ -65,11 +65,11 @@ var getShopsWithChecking = async (katalog_id, user_id, page, bolum_id) => {
 
 }
 
-var getShopsWithFilter = async (user_id, page, limit, data,type) => {
+var getShopsWithFilter = async (user_id, page, limit, data, type) => {
     let offset = (page - 1) * limit;
     data['limit'] = limit
     data['offset'] = offset
-    data['type']=type;
+    data['type'] = type;
     return await queryExequterWithThenBlock(shopQueries.GET_SHOPS_FILTER(data))
         .then(async (rows) => {
             let resultList = [];
@@ -82,12 +82,14 @@ var getShopsWithFilter = async (user_id, page, limit, data,type) => {
                 }));
                 let followCount = await queryExequterWithThenBlock(shopQueries.COUNTOFFOLLOWERS({shop_id: temp.shop_id}));
                 let productCount = await queryExequterWithThenBlock(shopQueries.COUNTOFPRODUCTS({shop_id: temp.shop_id}));
+                let bolumShop = await queryExequterWithThenBlock(shopQueries.GET_SHOP_BOLUM, [temp.shop_id])
                 Object.assign(temp, {
                     shop_type: type,
                     shop_images: sgop_images,
                     isFollowing: chekFollow[0].total,
                     followCount: followCount[0].total,
-                    productCount: productCount[0].total
+                    productCount: productCount[0].total,
+                    bolum_id: bolumShop.length ? bolumShop[0].bolum_id : null
                 })
                 resultList.push(temp);
             }
