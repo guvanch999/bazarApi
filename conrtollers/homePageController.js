@@ -220,7 +220,7 @@ var getBolumler = async (req, res) => {
         return sender.sendSuccess(res, rows);
     })
 }
-var getAdsForHomePage = async (req, res) => {
+var getAdsForHomePage = async (req, res, next) => {
     let _page = req.url_queries.page || 1;
     await pool.query(queries.ADSADMINONE({skip: (_page - 1) * 2}), async (err, rows) => {
         if (err) {
@@ -316,64 +316,14 @@ var getAdsForHomePage = async (req, res) => {
                         }
 
                     }
-
                     return sender.sendSuccess(res, _temp);
                 } else {
-                    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
-                        .then(rows => {
-
-                            let result = rows.map(x => {
-                                let data = {
-                                    id: x.id,
-                                    "tertip_nomer": 99999,
-                                    "ads_type_id": 1,
-                                    "product_id": x.id,
-                                    "ads_photo": x.product_photo,
-                                    "ads_description": x.description,
-                                    "ads_descriptionRU": x.descriptionRU,
-                                    "payment": 0,
-                                    "verify": 1,
-                                    "seen": x.seen
-                                }
-                                delete x['product_photo']
-                                data['detail'] = x;
-                                return data
-                            })
-                            return sender.sendSuccess(res, result)
-                        }).catch(err => {
-                            console.log(err)
-                            return sender.sendRespondInternalSErr(res, req.lang)
-                        })
+                    next()
                 }
             })
 
         } else {
-
-            return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
-                .then(rows => {
-
-                    let result = rows.map(x => {
-                        let data = {
-                            id: x.id,
-                            "tertip_nomer": 99999,
-                            "ads_type_id": 1,
-                            "product_id": x.id,
-                            "ads_photo": x.product_photo,
-                            "ads_description": x.description,
-                            "ads_descriptionRU": x.descriptionRU,
-                            "payment": 0,
-                            "verify": 1,
-                            "seen": x.seen
-                        }
-                        delete x['product_photo']
-                        data['detail'] = x;
-                        return data
-                    })
-                    return sender.sendSuccess(res, result)
-                }).catch(err => {
-                    console.log(err)
-                    return sender.sendRespondInternalSErr(res, req.lang)
-                })
+            next()
         }
     })
 
@@ -418,64 +368,93 @@ let likeParams = {
     product: {
         table: 'like_products',
         field: 'product_id',
-        decraseTable:'product',
-        decraseField:'likes'
+        decraseTable: 'product',
+        decraseField: 'likes'
     },
     service_product: {
         table: 'like_service_product',
         field: 'service_product_id',
-        decraseTable:'service_product',
-        decraseField:'like_num'
+        decraseTable: 'service_product',
+        decraseField: 'like_num'
     },
     shop_video: {
         table: 'like_video',
         field: 'shop_video_id',
-        decraseTable:'shop_videos',
-        decraseField:'like_count'
+        decraseTable: 'shop_videos',
+        decraseField: 'like_count'
     },
     service_video: {
         table: 'like_video',
         field: 'service_video_id',
-        decraseTable:'service_videos',
-        decraseField:'like_count'
+        decraseTable: 'service_videos',
+        decraseField: 'like_count'
     },
     lenta: {
         table: 'lenta_like',
         field: 'shop_lenta_id',
-        decraseTable:'shop_lenta',
-        decraseField:'like_count'
+        decraseTable: 'shop_lenta',
+        decraseField: 'like_count'
     },
 
 }
 let likeAllParams = async (req, res) => {
-    let {id,like}=req.params
-    if(!id || !like || !likeParams[like]){
-        return sender.sendRespondInvalidParams(res,req.lang)
+    let {id, like} = req.params
+    if (!id || !like || !likeParams[like]) {
+        return sender.sendRespondInvalidParams(res, req.lang)
     }
-    let {user_id}=req.user
-    if(!user_id){
+    let {user_id} = req.user
+    if (!user_id) {
         return sender.sendNotRegistered(res);
     }
-    let likePram=likeParams[like];
+    let likePram = likeParams[like];
     return promiseFunctions.queryExequterWithThenBlock(`select * from ${likePram.table} where user_id=${user_id} and ${likePram.field}=${id}`)
-        .then(async rows=>{
-            if(rows.length){
+        .then(async rows => {
+            if (rows.length) {
                 await promiseFunctions.queryExequterWithThenBlock(`delete from ${likePram.table} where id=${rows[0].id}`)
                 return 'UNLIKED'
             } else {
                 await promiseFunctions.queryExequterWithThenBlock(`insert into ${likePram.table} set user_id=${user_id},${likePram.field}=${id}`)
                 return 'LIKED'
             }
-        }).then(async status=>{
-            if(status==='LIKED'){
+        }).then(async status => {
+            if (status === 'LIKED') {
                 await promiseFunctions.queryExequterWithThenBlock(`update ${likePram.decraseTable} set ${likePram.decraseField}= Coalesce(${likePram.decraseField}, 0)+1 where id=${id}`)
             } else {
                 await promiseFunctions.queryExequterWithThenBlock(`update ${likePram.decraseTable} set ${likePram.decraseField}=Coalesce(${likePram.decraseField}, 0)-1 where id=${id}`)
             }
-            return sender.sendSuccess(res,{status})
-        }).catch(err=>{
+            return sender.sendSuccess(res, {status})
+        }).catch(err => {
             console.log(err)
-            return sender.sendRespondInternalSErr(res,req.lang)
+            return sender.sendRespondInternalSErr(res, req.lang)
+        })
+}
+
+let getProductsAsAds = async (req, res) => {
+    let _page = req.url_queries.page || 1;
+    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
+        .then(rows => {
+
+            let result = rows.map(x => {
+                let data = {
+                    id: x.id,
+                    "tertip_nomer": 99999,
+                    "ads_type_id": 1,
+                    "product_id": x.id,
+                    "ads_photo": x.product_photo,
+                    "ads_description": x.description,
+                    "ads_descriptionRU": x.descriptionRU,
+                    "payment": 0,
+                    "verify": 1,
+                    "seen": x.seen
+                }
+                delete x['product_photo']
+                data['detail'] = x;
+                return data
+            })
+            return sender.sendSuccess(res, result)
+        }).catch(err => {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang)
         })
 }
 
@@ -500,5 +479,6 @@ module.exports = {
     getBannerler,
     getVipServicesc6,
     getAllBrands,
-    likeAllParams
+    likeAllParams,
+    getProductsAsAds
 }

@@ -215,7 +215,6 @@ module.exports = {
         return await queryExequterWithThenBlock(queries.GET_LIST_OF_TOPLANAN, [offset, limit])
             .then(async rows => {
                 for (let i = 0; i < rows.length; i++) {
-
                     let shop = await queryExequterWithThenBlock(queries.GET_SHOP_DETAIL_FOR_VIDEO, [rows[i].shop_id])
                     rows[i]['shopDetail'] = shop.length ? shop[0] : null
                     if (user_id) {

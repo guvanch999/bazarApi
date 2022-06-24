@@ -26,7 +26,7 @@ router.get('/allshops/:b_id',controller.getAllShopsOfBolum);
 
 router.get('/bolumler',controller.getBolumler);
 router.post('/banners',controller.getBannerler);
-router.get('/adshome',tokenConvertor,controller.getAdsForHomePage)
+router.get('/adshome',tokenConvertor,controller.getAdsForHomePage,controller.getProductsAsAds)
 router.get('/like/:like/:id',auth.VerifyToken,controller.likeAllParams)
 
 
