@@ -387,15 +387,16 @@ let likeAllParams = async (req, res) => {
         })
 }
 
-let getProductsAsAds = async (req, res) => {
+let getProductsAsAds = async (req, res, next) => {
     let _page = req.url_queries.page || 1;
     if (_page % 2 === 0) {
-        console.log("Jubut")
+        next()
+        return;
     }
     return await promiseFunctions.queryExequterWithThenBlock(queries.ADSADMINONE({skip: (_page - 1) * 2}))
         .then(async adsAdmin => {
             if (adsAdmin.length === 2) {
-                let list = await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 16])
+                let list = await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [18, (_page - 1) * 16])
                 for (let i = 0; i < adsAdmin.length; i++) {
                     adsAdmin[i] = await getDetailOfAds(adsAdmin[i])
                     adsAdmin[i]['fromAdmin'] = true
@@ -404,7 +405,7 @@ let getProductsAsAds = async (req, res) => {
                 }
                 return list
             } else {
-                return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [18, (_page - 1) * 18])
             }
         }).then(rows => {
             let result = rows.map(x => {
@@ -418,6 +419,48 @@ let getProductsAsAds = async (req, res) => {
                     "ads_description": x.description,
                     "ads_descriptionRU": x.descriptionRU,
                     "payment": 0,
+                    "verify": 1,
+                    "seen": x.seen
+                }
+                delete x['product_photo']
+                data['detail'] = x;
+                return data
+            })
+            return sender.sendSuccess(res, result)
+        })
+        .catch(err => {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang)
+        })
+}
+let getServiceProductsAsAds = async (req, res) => {
+    let _page = req.url_queries.page || 1;
+    console.log((_page / 2 - 1))
+    return await promiseFunctions.queryExequterWithThenBlock(queries.ADSADMINONE({skip: (_page - 1) * 2}))
+        .then(async adsAdmin => {
+            if (adsAdmin.length === 2) {
+                let list = await promiseFunctions.queryExequterWithThenBlock(queries.GET_SERVICE_PRODUCT_FOR_ADS, [18, (_page / 2 - 1) * 16, 16])
+                for (let i = 0; i < adsAdmin.length; i++) {
+                    adsAdmin[i] = await getDetailOfAds(adsAdmin[i])
+                    adsAdmin[i]['fromAdmin'] = true
+                    console.log(i)
+                    list.unshift(adsAdmin[i])
+                }
+                return list
+            } else {
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GET_SERVICE_PRODUCT_FOR_ADS, [18, (_page / 2 - 1) * 18])
+            }
+        }).then(rows => {
+            let result = rows.map(x => {
+                if (x.fromAdmin) return x;
+                let data = {
+                    id: x.id,
+                    "tertip_nomer": 99999,
+                    "ads_type_id": 2,
+                    "product_id": x.id,
+                    "ads_photo": x.product_photo,
+                    "ads_description": x.description,
+                    "ads_descriptionRU": x.descriptionRU,
                     "verify": 1,
                     "seen": x.seen
                 }
@@ -502,5 +545,6 @@ module.exports = {
     getVipServicesc6,
     getAllBrands,
     likeAllParams,
-    getProductsAsAds
+    getProductsAsAds,
+    getServiceProductsAsAds
 }
