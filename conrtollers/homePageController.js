@@ -413,7 +413,7 @@ let getProductsAsAds = async (req, res, next) => {
                 let data = {
                     id: x.id,
                     "tertip_nomer": 99999,
-                    "ads_type_id": 1,
+                    "ads_type_id": x.bolum_id===2?4:x.bolum_id===3?5:6,
                     "product_id": x.id,
                     "ads_photo": x.product_photo,
                     "ads_description": x.description,
@@ -455,7 +455,7 @@ let getServiceProductsAsAds = async (req, res) => {
                 let data = {
                     id: x.id,
                     "tertip_nomer": 99999,
-                    "ads_type_id": 2,
+                    "ads_type_id": 7,
                     "product_id": x.id,
                     "ads_photo": x.product_photo,
                     "ads_description": x.description,
