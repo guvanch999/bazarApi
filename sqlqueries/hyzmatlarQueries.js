@@ -6,7 +6,7 @@ module.exports = {
     SERVICEKATALOGS: (params) => `select * from katalog where bolum_id=${params.id}`,
 
     SERVICESHOPS: (params) => `select * from service_shops limit 6;`,
-
+    GET_ISLIKED:'select * from like_service_product where user_id=? and service_product_id=?;',
 
     SERVICEPRODUCTS: (params) => {
         var page = params.page;

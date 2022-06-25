@@ -22,14 +22,14 @@ module.exports = {
     GET_SERVICE_FOR_FOLLOW:'select service_shops_name as shop_name,vip,photo from shop where id=?',
     SHOP_LENTA: (params) => `select s.shop_name,s.photo as shopPhoto,s.vip,sl.* from shop_lenta sl inner join shop s on s.id=sl.shop_id where sl.shop_id in (select shop_id from follow where shop_id>0 and user_id=?) limit ${params.offset}, ${params.limit};`,
 
-    GET_ALL_VIDEOS:'select * from (\n' +
-        '    (select \'SHOP\' as type, sv.* from shop_videos sv )\n' +
-        '    union all\n' +
-        '    (select \'SERVICE\' as type,  sev.* from service_videos sev)\n' +
-        ') results order by created_date desc;',
+    GET_ALL_VIDEOS:`select * from (
+            (select 'SHOP' as type, sv.* from shop_videos sv )
+            union all
+            (select 'SERVICE' as type,  sev.* from service_videos sev)
+        ) results order by created_date desc;`,
     GET_SHOP_DETAIL_FOR_VIDEO:"select shop_name,photo,vip,Restoran,shortDescription,shortDescriptionRU from shop where id=?",
     GET_SERVICE_DETAIL_FOR_VIDEO:"select service_shops_name as shop_name,photo,vip from service_shops where id=?",
-
+    CHECK_IS_LIKED_FOR_VIDEO:'select * from like_video where user_id=? and ?',
 
     GET_SAYLANAN_LIST:'select s.*, (select count(*) from saylanan_items si where si.saylanan_id=s.id) as productCount from saylanan s limit ?,?',
     GET_SAYLANAN_ITEMS_PRODUCT:'select * from product where verify=1 and id in (select product_id from saylanan_items where saylanan_id=?) limit ?,?',

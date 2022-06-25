@@ -138,6 +138,14 @@ module.exports = {
                         }
                         let chekFollow = await queryExequterWithThenBlock(tempQuery);
                         rows[i]['shopDetail']['isFollowing'] = chekFollow[0].total
+                        let filter = {}
+                        if (rows[i].type === 'SERVICE') {
+                            filter['service_video_id'] = rows[i].id
+                        } else {
+                            filter['shop_video_id'] = rows[i].id
+                        }
+                        let checkIsLiked = await queryExequterWithThenBlock(queries.CHECK_IS_LIKED_FOR_VIDEO, [user_id, filter])
+                        rows[i]['isLiked'] = checkIsLiked.length ? 1 : 0
                     }
                 }
                 return sender.sendSuccess(res, rows)
