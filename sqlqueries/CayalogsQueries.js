@@ -1,5 +1,5 @@
 module.exports = {
-     KATALOGSOFSHOP:(params)=>`select k.* from katalog as k inner join shop_katalog as sk on sk.katalog_id=k.id where sk.shop_id=${params.shop_id} and k.bolum_id = ${params.bolum_id}`,
+     KATALOGSOFSHOP:(params)=>`select k.* from katalog as k inner join shop_katalog as sk on sk.katalog_id=k.id where sk.shop_id=${params.shop_id}`,
 
 
 
