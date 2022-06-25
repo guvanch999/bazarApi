@@ -435,15 +435,14 @@ let getProductsAsAds = async (req, res, next) => {
 }
 let getServiceProductsAsAds = async (req, res) => {
     let _page = req.url_queries.page || 1;
-    console.log((_page / 2 - 1))
     return await promiseFunctions.queryExequterWithThenBlock(queries.ADSADMINONE({skip: (_page - 1) * 2}))
         .then(async adsAdmin => {
             if (adsAdmin.length === 2) {
                 let list = await promiseFunctions.queryExequterWithThenBlock(queries.GET_SERVICE_PRODUCT_FOR_ADS, [18, (_page / 2 - 1) * 16, 16])
                 for (let i = 0; i < adsAdmin.length; i++) {
                     adsAdmin[i] = await getDetailOfAds(adsAdmin[i])
+                    console.log(adsAdmin[i])
                     adsAdmin[i]['fromAdmin'] = true
-                    console.log(i)
                     list.unshift(adsAdmin[i])
                 }
                 return list
