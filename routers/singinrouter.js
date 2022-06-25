@@ -9,5 +9,4 @@ router.get('/all-users',controller.getAllUsers)
 router.post('/login-verify',controller.loginFunction);
 router.post('/check-registred',controller.checkNumberFunction);
 
-router.get('/get-counts',auth.VerifyToken,controller.getUserCounts)
 module.exports=router;

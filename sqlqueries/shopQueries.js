@@ -31,6 +31,9 @@ module.exports = {
         if(params.address_id){
             s+=` and address_id=${params.address_id}  `
         }
+        if(params.myFollows){
+            s+=` and id in (select shop_id from follow where user_id=${params.user_id}) `
+        }
         s+=` limit ${params.offset},${params.limit} `
         return s;
     },
@@ -42,7 +45,11 @@ module.exports = {
         if(params.address_id){
             s+=` and s.adress_id=${params.address_id}  `
         }
+        if(params.myFollows){
+            s+=` and s.id in (select service_id from follow where user_id=${params.user_id}) `
+        }
         s+=` limit ${params.offset},${params.limit} `
+
         return s;
     },
     K_SERVICE_IMAGES: (params) => `select pp.photo  from service_product_photo as pp  where pp.service_product_id in (select sp.id from service_product sp where sp.service_id=${params.shop_id}) limit 3;`,

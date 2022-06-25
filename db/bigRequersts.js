@@ -41,6 +41,7 @@ var getShopsWithFilter = async (user_id, page, limit, data, type) => {
     data['limit'] = limit
     data['offset'] = offset
     data['type'] = type;
+    data['user_id']=user_id;
     return await queryExequterWithThenBlock(shopQueries.GET_SHOPS_FILTER(data))
         .then(async (rows) => {
             let resultList = [];
@@ -64,7 +65,6 @@ var getShopsWithFilter = async (user_id, page, limit, data, type) => {
                 })
                 resultList.push(temp);
             }
-            console.log(resultList)
             return resultList;
         }).catch(err => {
             console.log(err);
@@ -77,6 +77,7 @@ var getServiceWithFilter = async (user_id, page, limit, data) => {
     let offset = (page - 1) * limit;
     data['limit'] = limit
     data['offset'] = offset
+    data['user_id']=user_id
     return await queryExequterWithThenBlock(shopQueries.GET_SERVICES_FILTER(data))
         .then(async (rows) => {
             let resultList = [];
@@ -98,7 +99,6 @@ var getServiceWithFilter = async (user_id, page, limit, data) => {
                 })
                 resultList.push(temp);
             }
-            console.log(resultList)
             return resultList;
         }).catch(err => {
             console.log(err);
