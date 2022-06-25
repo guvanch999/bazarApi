@@ -13,17 +13,17 @@ module.exports = {
         }
         return await queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ORDER(productIds))
             .then(async rows => {
-                for(let i=0;i<rows.length;i++) {
-                    let sizeId=productIds.find(x=>x.p_id===rows[i].id);
-                    let sizeModel=null
-                    if(sizeId.s_id){
-                        sizeModel=await queryExequterWithThenBlock(queries.GET_SIZE_BY_ID,[sizeId.s_id])
+                for (let i = 0; i < rows.length; i++) {
+                    let sizeId = productIds.find(x => x.p_id === rows[i].id);
+                    let sizeModel = null
+                    if (sizeId.s_id) {
+                        sizeModel = await queryExequterWithThenBlock(queries.GET_SIZE_BY_ID, [sizeId.s_id])
                     }
-                    rows[i]['sizeModel']=sizeModel?sizeModel.length?sizeModel[0]:null:null;
+                    rows[i]['sizeModel'] = sizeModel ? sizeModel.length ? sizeModel[0] : null : null;
                 }
                 return rows
             })
-            .then(async rows=>{
+            .then(async rows => {
                 let shopIds = rows.map(x => x.shop_id).filter((x, i, a) => a.indexOf(x) === i);
                 let shopsList = await queryExequterWithThenBlock(queries.GET_SHOPS_OF_PRODUCTS(shopIds))
                 let products = shopsList.map(data => {
@@ -151,7 +151,11 @@ module.exports = {
         delete data['products'];
         data['user_id'] = user_id;
         data['wagty'] = new Date().toISOString().slice(0, 19).replace('T', ' ')
-        data['sargyt_kody'] = Date.now()
+        let shopDetail = await queryExequterWithThenBlock(queries.GET_SHOP_NAME, [data['shop_id']])
+        if (!shopDetail.length) {
+            return sender.sendRespondInvalidParams(res, req.lang, [{msg: 'No shop detected'}])
+        }
+        data['sargyt_kody'] = ''
         return await queryExequterWithThenBlock(queries.MAKE_ORDER, [data])
             .then(async result => {
                 let newOrderId = result.insertId
@@ -162,6 +166,8 @@ module.exports = {
                 await queryExequterWithThenBlock(s)
                 return newOrderId
             }).then(async orderId => {
+                let orderCode = shopDetail[0].shop_name.replace(/\s/g, '').substr(0, 3) + orderId
+                await queryExequterWithThenBlock(queries.UPDATE_ORDER_KODE, [orderCode, orderId])
                 if (data.bonus_id) {
                     await queryExequterWithThenBlock(queries.ADD_TO_BONUS_BANK, [data.bonus_kart, data.shop_id, user_id])
                 }
@@ -206,13 +212,13 @@ module.exports = {
             .then(async rows => {
                 if (rows.length) {
                     let products = await queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_LIST(), [order_id])
-                    return Object.assign(rows[0],{products})
+                    return Object.assign(rows[0], {products})
                 } else {
-                    return  false
+                    return false
                 }
             }).then(data => {
-                if(data){
-                    return sender.sendSuccess(res,data)
+                if (data) {
+                    return sender.sendSuccess(res, data)
                 } else {
                     return sender.sendRespondInvalidParams(res, req.lang, [{msg: "No order detected"}])
                 }
