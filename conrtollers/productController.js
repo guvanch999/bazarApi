@@ -5,19 +5,7 @@ const promiseFunctions = require('../utils/promisiFunctions');
 const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
 const shopQueries = require("../sqlqueries/serviceShops");
 const {calculateRating} = require("../utils/useFullFunctions");
-var productDetailsMini = async (req, res) => {
-    var p_id = req.params.id;
-    if (p_id === undefined) {
-        return sender.sendRespondInvalidParams(res, req.lang);
-    }
-    await pool.query(queries.DETAILMINI({id: p_id}), (err, rows) => {
-        if (err) {
-            console.log(err);
-            return sender.sendRespondInternalSErr(res, req.lang);
-        }
-        return sender.sendSuccess(res, rows);
-    });
-}
+
 var productDetailsFull = async (req, res) => {
     var p_id = req.params.id;
     if (p_id === undefined) {
@@ -127,7 +115,6 @@ var getAllProducts = async (req, res) => {
 
 module.exports = {
     productDetailsFull,
-    productDetailsMini,
     getAllProducts,
     async getAllColors(req, res) {
         return await queryExequterWithThenBlock(queries.GET_ALL_COLORS)

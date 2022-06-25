@@ -1,9 +1,5 @@
 module.exports = {
-    SHOPDETAILFORPRODUCTDETAIL: (params) => ``,
-    DETAILMINI: (params) => `select p.*,c.* from product p inner join colors c on c.id=p.color_id where p.id=${params.id}`,
-
-
-    DETAILSFULL: (params) => `select p.*,c.color_name,c.cod_web,s.shop_name,s.photo as shop_photo,s.phones as shop_phones from product p left join colors c on c.id=p.colors_id left join shop s on s.id=p.shop_id where p.id=${params.id}`,
+    DETAILSFULL: (params) => `select p.*,c.color_name,c.name_in_ru as color_nameRU,c.cod_web,s.shop_name,s.photo as shop_photo,s.phones as shop_phones from product p left join colors c on c.id=p.colors_id left join shop s on s.id=p.shop_id where p.id=${params.id}`,
     SHOPPRODUCTCOUNT: (shop_id) => `select count(*) as total from product where id=${shop_id}`,
     PRODUCTIMAGES: (product_id) => `select * from product_photo where product_id=${product_id}`,
     SELECT_RATING_OF_PRODUCT: `select * from rating_products where product_id=?`,

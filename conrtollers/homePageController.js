@@ -12,25 +12,7 @@ var getAllBanners = async (req, res) => {
         return sender.sendSuccess(res, result);
     })
 };
-var getAdsAdmin = async (req, res) => {
-    await pool.query(queries.ADSADMIN, (err, rows) => {
-        if (err) {
-            console.log(err);
-            return sender.sendRespondInternalSErr(res, req.lang);
-        }
-        return sender.sendSuccess(res, rows);
-    });
-}
 
-var getAdsFromShops = async (req, res) => {
-    await pool.query(queries.ADSFROMSHOP, (err, rows) => {
-        if (err) {
-            console.log(err);
-            return sender.sendRespondInternalSErr(res, req.lang);
-        }
-        return sender.sendSuccess(res, rows);
-    });
-}
 var getBannerL2 = async (req, res) => {
     var b_id = req.params.id;
     if (b_id === undefined) {
@@ -157,14 +139,6 @@ var getAllShopsOfBolum = async (req, res) => {
         return sender.sendSuccess(res, rows);
     });
 }
-var secondpageDetails = async (req, res) => {
-    let result = await functionsforUSE.getadsSHopsForSecondPage();
-    if (result) {
-        return sender.sendSuccess(res, result);
-    } else {
-        return sender.sendRespondInternalSErr(res, req.lang);
-    }
-}
 var theeShopsForHomePage = async (req, res) => {
     await pool.query(queries.GETMAINSHOPS({}), (err, rows) => {
         if (err) {
@@ -174,23 +148,7 @@ var theeShopsForHomePage = async (req, res) => {
         return sender.sendSuccess(res, rows);
     });
 }
-var followFunction = async (req, res) => {
-    let user_id = req.body.user_id || null;
-    let shop_id = req.body.shop_id || 0;
-    let service_id = req.body.service_id || 0;
-    if (user_id == null) {
-        return sender.sendRespondInvalidParams(res, req.lang);
-    }
-    if (shop_id === 0 && service_id === 0) {
-        return sender.sendRespondInvalidParams(res, req.lang);
-    }
-    await pool.query(queries.FOLLOW({user_id: user_id, shop_id: shop_id, service_id: service_id})).then((result) => {
-        return sender.sendSuccess(res, result);
-    }).catch(err => {
-        console.log(err);
-        return sender.sendRespondInternalSErr(res, req.lang);
-    })
-}
+
 var getBannerler = async (req, res) => {
     let _params = req.body;
     if (_params.limit === undefined) {
@@ -431,10 +389,26 @@ let likeAllParams = async (req, res) => {
 
 let getProductsAsAds = async (req, res) => {
     let _page = req.url_queries.page || 1;
-    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
-        .then(rows => {
-
+    if (_page % 2 === 0) {
+        console.log("Jubut")
+    }
+    return await promiseFunctions.queryExequterWithThenBlock(queries.ADSADMINONE({skip: (_page - 1) * 2}))
+        .then(async adsAdmin => {
+            if (adsAdmin.length === 2) {
+                let list = await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 16])
+                for (let i = 0; i < adsAdmin.length; i++) {
+                    adsAdmin[i] = await getDetailOfAds(adsAdmin[i])
+                    adsAdmin[i]['fromAdmin'] = true
+                    console.log(i)
+                    list.unshift(adsAdmin[i])
+                }
+                return list
+            } else {
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [(_page - 1) * 18])
+            }
+        }).then(rows => {
             let result = rows.map(x => {
+                if (x.fromAdmin) return x;
                 let data = {
                     id: x.id,
                     "tertip_nomer": 99999,
@@ -452,17 +426,68 @@ let getProductsAsAds = async (req, res) => {
                 return data
             })
             return sender.sendSuccess(res, result)
-        }).catch(err => {
+        })
+        .catch(err => {
             console.log(err)
             return sender.sendRespondInternalSErr(res, req.lang)
         })
 }
 
+async function getDetailOfAds(row) {
+    if (row.ads_type_id) {
+        switch (row.ads_type_id) {
+            case 1: {
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then((rows) => {
+                    row.detail = rows.length ? rows[0] : {};
+                    return row;
+                }).catch(err => {
+                    row.detail = {};
+                    return row
+                })
+                break;
+            }
+            case 2: {
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then((rows) => {
+                    row.detail = rows.length ? rows[0] : {};
+                    return row;
+                }).catch(err => {
+                    row.detail = {};
+                    return row
+                })
+                break
+            }
+            case 3: {
+                row.detail = {};
+                break
+            }
+            case 4: {
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GETSHOPBYID({id: row.shop_id})).then((rows) => {
+                    row.detail = rows.length ? rows[0] : {};
+                    return row;
+                }).catch(err => {
+                    row.detail = {};
+                    return row
+                })
+                break
+            }
+            case 5: {
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GETSERVISESHOPBYID({id: row.shop_id})).then((rows) => {
+                    row.detail = rows.length ? rows[0] : {};
+                    return row;
+                }).catch(err => {
+                    row.detail = {};
+                    return row
+                })
+                break
+            }
+        }
+    } else
+        return row;
+}
+
 
 module.exports = {
     getAllBanners,
-    getAdsAdmin,
-    getAdsFromShops,
     getBannerL2,
     getCatalogsByBolumId,
     getVipShopsc6,
@@ -470,12 +495,9 @@ module.exports = {
     getCategoriesByBid,
     getSubCategories,
     getAllShopsOfBolum,
-
     getBolumler,
     getAdsForHomePage,
-    secondpageDetails,
     theeShopsForHomePage,
-    followFunction,
     getBannerler,
     getVipServicesc6,
     getAllBrands,

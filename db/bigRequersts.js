@@ -2,35 +2,6 @@ const {queryExequterWithThenBlock} = require('../utils/promisiFunctions')
 const queries = require('../sqlqueries/homeQueries');
 const shopQueries = require('../sqlqueries/shopQueries');
 
-let getadsSHopsForSecondPage = async () => {
-    await pool.query(queries.ADSFROMSHOP).then(async (adslist) => {
-        let resultList = [];
-        for (let i = 0; i < adslist.length; i++) {
-            let temp = Object.assign({}, adslist[i]);
-            if (temp.is_product) {
-                let shopDetail = await pool.query(queries.SHOPDETAILSPhotoAndname({id: temp.shop_id}));
-                let productDetail = await pool.query(queries.DETAILSFULL({id: temp.product_id}));
-                Object.assign(temp, {
-                    shopDetail: shopDetail,
-                    productDetail: productDetail
-                });
-            } else {
-                let shopDetail = await pool.query(queries.SERVICESHOPS({id: temp.shop_id}));
-                let productDetail = await pool.query(queries.SERVICEPRODUCTDETAIL({id: temp.product_id}));
-                Object.assign(temp, {
-                    shopDetail: shopDetail,
-                    productDetail: productDetail
-                });
-            }
-            resultList.push(temp);
-        }
-        return resultList;
-    }).catch((err) => {
-        console.log(err);
-        return false;
-    })
-
-}
 
 var getShopsWithChecking = async (katalog_id, user_id, page, bolum_id) => {
     let offset = (page - 1) * 20;
@@ -136,7 +107,6 @@ var getServiceWithFilter = async (user_id, page, limit, data) => {
 
 }
 module.exports = {
-    getadsSHopsForSecondPage,
     getShopsWithChecking,
     getShopsWithFilter,
     getServiceWithFilter

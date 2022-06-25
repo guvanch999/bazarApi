@@ -7,7 +7,6 @@ module.exports = {
     //done
 
 
-    ADSADMIN: "select * from ads_admin order by tertip_nomer asc;",
     ADSADMINONE: (params) => `select * from ads_admin order by tertip_nomer asc limit 2 offset ${ params.skip };`,
     GETPRODUCTBYID: (params) => `select * from product where id=${params.id}`,
     GETSERVICESHOPPRODUCT: (params) => `select * from service_shops where id=${params.id};`,
@@ -26,7 +25,7 @@ module.exports = {
 
 
     //follow etmegi yazybermeli zyyany yok
-    FOLLOW: (params) => `insert into follow(user_id,shop_id,service_id) values  (${params.user_id},${params.shop_id},${params.service_id}) returning *;`,
+
     CHECKFOLLOW:(params)=>`select count(*) as count from follow where user_id=${params.user_id} and ${ params.shop }=${params.shop_id}`,
     //done
 
