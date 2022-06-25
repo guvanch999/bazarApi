@@ -399,8 +399,8 @@ let getProductsAsAds = async (req, res, next) => {
                 let list = await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [18, (_page - 1) * 16])
                 for (let i = 0; i < adsAdmin.length; i++) {
                     adsAdmin[i] = await getDetailOfAds(adsAdmin[i])
+                    console.log(adsAdmin)
                     adsAdmin[i]['fromAdmin'] = true
-                    console.log(i)
                     list.unshift(adsAdmin[i])
                 }
                 return list
