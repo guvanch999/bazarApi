@@ -478,7 +478,9 @@ let getServiceProductsAsAds = async (req, res) => {
 async function getDetailOfAds(row) {
     if (row.ads_type_id) {
         switch (row.ads_type_id) {
-            case 1: {
+            case 4:
+            case 5:
+            case 6:{
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then((rows) => {
                     row.detail = rows.length ? rows[0] : {};
                     return row;
@@ -488,7 +490,7 @@ async function getDetailOfAds(row) {
                 })
                 break;
             }
-            case 2: {
+            case 7: {
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then((rows) => {
                     row.detail = rows.length ? rows[0] : {};
                     return row;
@@ -498,11 +500,13 @@ async function getDetailOfAds(row) {
                 })
                 break
             }
-            case 3: {
+            case 8: {
                 row.detail = {};
                 break
             }
-            case 4: {
+            case 1:
+            case 3:
+            case 9:{
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GETSHOPBYID({id: row.shop_id})).then((rows) => {
                     row.detail = rows.length ? rows[0] : {};
                     return row;
@@ -512,7 +516,7 @@ async function getDetailOfAds(row) {
                 })
                 break
             }
-            case 5: {
+            case 2: {
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GETSERVISESHOPBYID({id: row.shop_id})).then((rows) => {
                     row.detail = rows.length ? rows[0] : {};
                     return row;
@@ -521,6 +525,9 @@ async function getDetailOfAds(row) {
                     return row
                 })
                 break
+            }
+            default: {
+                return row
             }
         }
     } else

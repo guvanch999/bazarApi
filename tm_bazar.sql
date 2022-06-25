@@ -81,6 +81,16 @@ INSERT INTO `ads_type` (`id`, `name`) VALUES
 (4, 'Magazin'),
 (5, 'Hyzmat magazin');
 
+|  1 | shop             |
+|  2 | Service_shop     |
+|  3 | Restoran         |
+|  4 | Restoran Product |
+|  5 | Fashion Product  |
+|  6 | Product          |
+|  7 | Service Product  |
+|  8 | Surat            |
+|  9 | Fashion_shop     |
+
 
 
 
