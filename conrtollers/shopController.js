@@ -89,9 +89,9 @@ var getShopCatalogs = async (req, res) => {
 
 var getShopsWithCckg = async (req, res) => {
     let catalog_id = req.params.catalog_id || 0;
-    let bolum_id=req.url_queries.bolum_id||0;
+    let bolum_id = req.url_queries.bolum_id || 0;
     let page = req.url_queries.page || 1;
-    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page,bolum_id);
+    let resultRows = await functionsUSE.getShopsWithChecking(catalog_id, req.user.user_id, page, bolum_id);
     if (resultRows) {
         return sender.sendSuccess(res, resultRows);
     } else {
@@ -114,26 +114,35 @@ let getBolumShops = async (req, res) => {
 
 var getShopsWithFilterAndSort = async (req, res) => {
     let page = req.url_queries.page || 1;
-    let limit=req.url_queries.limit || 20
-    let shop_type=req.url_queries.shop_type;
-    let resultRows =[];
-    if(shop_type==='SHOP'){
-        resultRows = await functionsUSE.getShopsWithFilter(req.user.user_id, page,limit,req.body,shop_type);
-    } else
-    if(shop_type==='RESTORAN') {
-        resultRows = await functionsUSE.getShopsWithFilter(req.user.user_id, page,limit,req.body,shop_type);
-    } else
-    if(shop_type==='SERVICE'){
-        resultRows=await functionsUSE.getServiceWithFilter(req.user.user_id, page,limit,req.body)
+    let limit = req.url_queries.limit || 20
+    let shop_type = req.url_queries.shop_type;
+    let resultRows = [];
+    if (shop_type === 'SHOP') {
+        resultRows = await functionsUSE.getShopsWithFilter(req.user.user_id, page, limit, req.body, shop_type);
+    } else if (shop_type === 'RESTORAN') {
+        resultRows = await functionsUSE.getShopsWithFilter(req.user.user_id, page, limit, req.body, shop_type);
+    } else if (shop_type === 'SERVICE') {
+        resultRows = await functionsUSE.getServiceWithFilter(req.user.user_id, page, limit, req.body)
     } else {
-        return sender.sendRespondInvalidParams(res,req.lang)
+        return sender.sendRespondInvalidParams(res, req.lang)
     }
+    let count = await queryExequterWithThenBlock(queries.GET_COUNT_OF_FOLLOWS, [req.user.user_id])
+        .then(rows => {
+            return rows[0].total
+        }).catch(err => {
+            console.log(err)
+            return 0;
+        })
     if (resultRows) {
-        return sender.sendSuccess(res, resultRows);
+        return sender.sendSuccess(res, {
+            resultRows,
+            count
+        });
     } else {
         return sender.sendRespondInternalSErr(res, req.lang);
     }
 }
+
 async function getFullShopDetail(shop_id) {
     return await queryExequterWithThenBlock(queries.SHOPDETAILSFULL({id: shop_id}))
         .then(rows => {
@@ -152,11 +161,11 @@ async function getFullShopDetail(shop_id) {
                 let product = await queryExequterWithThenBlock(queries.COUNTOFPRODUCTS({shop_id}))
                 let katalogs = await queryExequterWithThenBlock(queries.GET_SHOP_KATALOGS + shop_id);
                 let ratings = await queryExequterWithThenBlock(queries.GET_SHOP_RATING, [shop_id])
-                let address=await queryExequterWithThenBlock(queries.GET_ADDRESS_BY_ID,[shop_id])
+                let address = await queryExequterWithThenBlock(queries.GET_ADDRESS_BY_ID, [shop_id])
                 let rating = calculateRating(ratings)
                 rating['totalRatingCount'] = ratings.length;
                 data['rating'] = rating;
-                let fullAddress=address.length?address[0].address:''
+                let fullAddress = address.length ? address[0].address : ''
                 return Object.assign(data, {
                     followCount: follow[0].total,
                     productCount: product[0].total,
@@ -174,17 +183,17 @@ async function getFullShopDetail(shop_id) {
 }
 
 async function getShopCategories(shop_id, katalog_id) {
-    return await queryExequterWithThenBlock(queries.GET_SHOP_CATEGORIES,[shop_id,katalog_id])
-        .then(async rows=>{
-            let ids=rows.map(x=>x.id);
-            let subcategories=await queryExequterWithThenBlock(queries.GET_SHOP_SUBCATEGORIES,[shop_id,ids.join(',')])
-            let result=rows.map(data=>{
-                let ss=subcategories.filter(x=>x.category_id===data.id);
-                data['subcategories']=ss;
+    return await queryExequterWithThenBlock(queries.GET_SHOP_CATEGORIES, [shop_id, katalog_id])
+        .then(async rows => {
+            let ids = rows.map(x => x.id);
+            let subcategories = await queryExequterWithThenBlock(queries.GET_SHOP_SUBCATEGORIES, [shop_id, ids.join(',')])
+            let result = rows.map(data => {
+                let ss = subcategories.filter(x => x.category_id === data.id);
+                data['subcategories'] = ss;
                 return data;
             })
             return result
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err)
             return false
         })
@@ -205,11 +214,11 @@ module.exports = {
         if (!shop_id || !katalog_id) {
             return sender.sendRespondInvalidParams(res, req.lang)
         }
-        let list=await getShopCategories(shop_id,katalog_id);
-        if(!list){
-            return sender.sendRespondInternalSErr(res,req.lang);
+        let list = await getShopCategories(shop_id, katalog_id);
+        if (!list) {
+            return sender.sendRespondInternalSErr(res, req.lang);
         }
-        return  sender.sendSuccess(res,list)
+        return sender.sendSuccess(res, list)
 
     }
 }

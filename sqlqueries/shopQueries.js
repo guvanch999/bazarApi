@@ -8,7 +8,7 @@ module.exports = {
     SHOPKATALOGS: (params) => `select k.* from katalog as k inner join shop_katalog as sk on k.id=sk.katalog_id where sk.shop_id=${params.id}`,
 
     KATALOGSHOPS: (params) => {
-        let bolum=` where s.id in (select sb.shop_id from shop_bolum sb where sb.bolum_id=${params.bolum_id}) `
+        let bolum = ` where s.id in (select sb.shop_id from shop_bolum sb where sb.bolum_id=${params.bolum_id}) `
         let s = `select s.id as shop_id,s.shop_name,s.shortDescription,s.shortDescriptionRU,s.photo,s.vip from shop s  ${params.katalog_id>0?' inner join shop_katalog sk on sk.shop_id=s.id and sk.katalog_id='+params.katalog_id:''}  ${params.bolum_id>0 && params.katalog_id<=0?bolum:''} limit ${params.offset},20 `;
         console.log(s)
         return s;
@@ -25,16 +25,16 @@ module.exports = {
     SHOP_LENTA: (params) => `select sl.*,(select count(*) from lenta_like ll where ll.shop_lenta_id=sl.id) as likeCount from shop_lenta sl where sl.shop_id=${params.shop_id} limit ${params.offset}, ${params.limit};`,
     GET_SHOP_CATEGORIES: "select c.*  from shop_category sc inner join category c on c.id=sc.category_id where sc.shop_id=? and sc.katalog_id=?;",
     GET_SHOP_SUBCATEGORIES: 'select s.* from shop_subcategory ss inner join subcategory s on s.id=ss.subcategory_id where ss.shop_id=? and ss.category_id in (0,?)',
-    GET_ADDRESS_BY_ID:`select concat(aw.name,' ',a.name) as address from adress a inner join adress_welayat aw on aw.id=a.adress_welayat_id where a.id=?`,
+    GET_ADDRESS_BY_ID: `select concat(aw.name,' ',a.name) as address from adress a inner join adress_welayat aw on aw.id=a.adress_welayat_id where a.id=?`,
     GET_SHOPS_FILTER: (params) => {
         let s = `select id as shop_id,shop_name,shortDescription,shortDescriptionRU,photo,vip from shop where verify=1 and   Restoran=${params.type==='SHOP'?0:1} `;
-        if(params.address_id){
-            s+=` and address_id=${params.address_id}  `
+        if (params.address_id) {
+            s += ` and address_id=${params.address_id}  `
         }
-        if(params.myFollows){
-            s+=` and id in (select shop_id from follow where user_id=${params.user_id}) `
+        if (params.myFollows) {
+            s += ` and id in (select shop_id from follow where user_id=${params.user_id}) `
         }
-        s+=` limit ${params.offset},${params.limit} `
+        s += ` limit ${params.offset},${params.limit} `
         return s;
     },
     GET_SERVICES_FILTER: (params) => {
@@ -42,13 +42,13 @@ module.exports = {
                  inner join service_catalog sc on sc.service_id=s.id
                  inner join katalog k on k.id=sc.katalog_id
                  where s.verify=1 `;
-        if(params.address_id){
-            s+=` and s.adress_id=${params.address_id}  `
+        if (params.address_id) {
+            s += ` and s.adress_id=${params.address_id}  `
         }
-        if(params.myFollows){
-            s+=` and s.id in (select service_id from follow where user_id=${params.user_id}) `
+        if (params.myFollows) {
+            s += ` and s.id in (select service_id from follow where user_id=${params.user_id}) `
         }
-        s+=` limit ${params.offset},${params.limit} `
+        s += ` limit ${params.offset},${params.limit} `
 
         return s;
     },
@@ -56,5 +56,6 @@ module.exports = {
     CHECK_SERVICE_FOLLOW: (params) => `select count(*) as total from follow where user_id=${params.user_id} and service_id=${params.shop_id}`,
     COUNT_OF_SERVICE_FOLLOWERS: (params) => `select count(*) as total from follow where service_id=${params.shop_id}`,
     COUNT_OF_SERVICE_PRODUCTS: (params) => `select count(*) as total from service_product where service_id=${params.shop_id}`,
-    GET_SHOP_BOLUM:"select bolum_id from shop_bolum where shop_id=?"
+    GET_SHOP_BOLUM: "select bolum_id from shop_bolum where shop_id=?",
+    GET_COUNT_OF_FOLLOWS: 'select count(*) as total from follow where user_id=?'
 }
