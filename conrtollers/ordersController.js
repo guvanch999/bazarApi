@@ -69,11 +69,16 @@ module.exports = {
             })
     },
     async getAllPromoCodes(req, res) {
-        if (!req.user.user_id) {
+        if (req.user.user_id < 1) {
             return sender.sendRespondInvalidParams(res, req.lang, [{msg: "No token detected"}])
         }
+
+        let typeAll = req.url_queries.all || false
         let user_id = req.user.user_id;
-        return await queryExequterWithThenBlock(queries.GET_ALL_PROMOCODES, [user_id])
+        let sqlCode = typeAll ? queries.GET_ALL_PROMOCODES : queries.GET_MY_PROMOCODES
+        console.log(sqlCode)
+        console.log(user_id)
+        return await queryExequterWithThenBlock(sqlCode, [user_id])
             .then(rows => {
                 return sender.sendSuccess(res, rows)
             }).catch(err => {

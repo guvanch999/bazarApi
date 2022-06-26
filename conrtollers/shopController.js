@@ -180,7 +180,7 @@ async function getShopCategories(shop_id, katalog_id) {
             let subcategories=await queryExequterWithThenBlock(queries.GET_SHOP_SUBCATEGORIES,[shop_id,ids.join(',')])
             let result=rows.map(data=>{
                 let ss=subcategories.filter(x=>x.category_id===data.id);
-                data['suncategories']=ss;
+                data['subcategories']=ss;
                 return data;
             })
             return result

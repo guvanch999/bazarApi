@@ -24,7 +24,8 @@ module.exports = {
     INCRASE_BONUS_BANK: 'update bonus_bank set balans+? where shop_id=(select shop_id from bonus where id = ? limit 1) and user_id=?',
 
 
-    GET_ALL_PROMOCODES: "select p.*,pu.used from promokod p left join promokod_user pu on pu.promokod_id=p.id and pu.user_id=?",
+    GET_ALL_PROMOCODES: "select *,null as used from promokod where not id in (select promokod_id from promokod_user where user_id=?)",
+    GET_MY_PROMOCODES: "select p.*,pu.used from promokod p inner join promokod_user pu on pu.promokod_id=p.id and pu.user_id=?",
     USE_PROMOCODE: "insert into promokod_user set ?",
     PROMOCODE_MAKE_USED: "update promokod_user set used=1 where promokod_id=? and user_id=?",
 
