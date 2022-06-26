@@ -23,7 +23,7 @@ var productDetailsFull = async (req, res) => {
         let ratings = await queryExequterWithThenBlock(queries.SELECT_RATING_OF_PRODUCT, [p_id]);
         let rating = calculateRating(ratings)
         rating['totalRatingCount'] = ratings.length;
-        if (req.user.user_id > 0) {
+        if (req.user.user_id>0) {
             console.log("birinji")
             if (detail.bonus) {
                 let bonus = await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT, [detail.shop_id, req.user.user_id]);
@@ -50,12 +50,13 @@ var getAllProducts = async (req, res) => {
     if (_params.verify === undefined) {
         _params.verify = 1;
     }
-    _params.page = parseInt(req.url_queries.page) || 1
-
-    _params.limit = parseInt(req.url_queries.count) || 20;
-
-    _params.offset = (_params.page - 1) * _params.limit
-    console.log(_params)
+    if (_params.page === undefined) {
+        _params.page = 1;
+    }
+    if (!_params.limit > 0) {
+        _params.limit = 20;
+    }
+    _params.offset = (_params.page - 1) * 20
     await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTSBYFILTERANDSEARCH(_params))
         .then(async rows => {
             let total = 0;
@@ -91,7 +92,7 @@ var getAllProducts = async (req, res) => {
                 }
 
             }
-            if (req.user.user_id > 0) {
+            if (req.user.user_id>0) {
                 for (let i = 0; i < rows.length; i++) {
                     if (rows[i].bonus) {
                         let bonus = await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT, [rows[i].shop_id, req.user.user_id]);
