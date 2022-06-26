@@ -31,7 +31,7 @@ module.exports = {
 
 
     BOLUM: "select * from bolum order by tertip_nomer asc;",
-    SHOPSL2:(b_id,isRestoran)=>`select s.* from shop s where s.vip=1 and s.Restoran=${isRestoran} and s.id in (select sb.shop_id from shop_bolum sb where sb.bolum_id=${b_id}) limit 6`,
+    SHOPSL2:(b_id,isRestoran)=>`select s.* from shop s where  s.Restoran=${isRestoran} and s.id in (select sb.shop_id from reklama_6shops sb where sb.bolum_id=${b_id}) limit 6`,
     VIPSERVICESC6: "select * from service_shops limit 6;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
     CATALOG: (params) => {

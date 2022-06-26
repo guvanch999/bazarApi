@@ -115,7 +115,8 @@ module.exports = {
     },
     async getAllVideos(req, res) {
         let {user_id} = req.user
-        return await queryExequterWithThenBlock(queries.GET_ALL_VIDEOS)
+        let page = req.url_queries.page || 1
+        return await queryExequterWithThenBlock(queries.GET_ALL_VIDEOS, [(page - 1) * 20])
             .then(async rows => {
                 for (let i = 0; i < rows.length; i++) {
                     if (rows[i].type === 'SHOP') {

@@ -12,7 +12,7 @@ module.exports = {
         var page = params.page;
         var count = params.count || 18;
         var skip = (page - 1) * count;
-        var s = `select sp.*,spp.photo from service_product sp left join service_product_photo spp on spp.service_product_id=sp.id where sp.verify=${isUndefined(params.verify)?0:params.verify}`;
+        var s = `select sp.*,spp.photo from service_product sp left join service_product_photo spp on spp.service_product_id=sp.id where sp.verify=1`;
 
         if (params.serviceID) {
             s += ` and sp.service_id =${params.serviceID}   `

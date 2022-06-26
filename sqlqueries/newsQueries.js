@@ -26,7 +26,7 @@ module.exports = {
             (select 'SHOP' as type, sv.* from shop_videos sv )
             union all
             (select 'SERVICE' as type,  sev.* from service_videos sev)
-        ) results order by created_date desc;`,
+        ) results order by created_date desc limit ?,20;`,
     GET_SHOP_DETAIL_FOR_VIDEO:"select shop_name,photo,vip,Restoran,shortDescription,shortDescriptionRU from shop where id=?",
     GET_SERVICE_DETAIL_FOR_VIDEO:"select service_shops_name as shop_name,photo,vip from service_shops where id=?",
     CHECK_IS_LIKED_FOR_VIDEO:'select * from like_video where user_id=? and ?',
