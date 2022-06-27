@@ -813,6 +813,8 @@ CREATE TABLE `service_shops` (
   `verify` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+alter table service_shops add column descriptionRU text;
+
 
 CREATE TABLE `service_shop_top3_product` (
   `id` int(11) NOT NULL,
@@ -947,10 +949,10 @@ create table lenta_like(
 `user_id` int(11) not null
 );
 
-ALTER TABLE `bonus_bank`
+ALTER TABLE `rating_service_product`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE bonus_bank MODIFY id int NOT NULL AUTO_INCREMENT;
+ALTER TABLE `rating_service_product` MODIFY id int NOT NULL AUTO_INCREMENT;
 
 CREATE TABLE `shop_subcategory` (
   `id` int(11) NOT NULL,

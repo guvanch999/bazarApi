@@ -74,14 +74,14 @@ module.exports = {
                     rating['totalRatingCount'] = ratings.length;
                     data['rating'] = rating;
                     let katalog_name = katalogs.length ? katalogs[0].katalog_name : "";
-                    let katalog_nameru = katalogs.length ? katalogs[0].katalog_nameru : "";
+                    let katalog_nameRU = katalogs.length ? katalogs[0].katalog_nameRU : "";
                     return Object.assign(data, {
                         followCount: followCount[0].total,
                         productCount: productCount[0].total,
                         listBanners,
                         listVideos,
                         katalog_name,
-                        katalog_nameru
+                        katalog_nameRU
                     })
                 } else {
                     return false
