@@ -24,5 +24,5 @@ router.post('/banners', controller.getBannerler);
 router.get('/adshome', tokenConvertor, controller.getAdsForHomePage, controller.getProductsAsAds, controller.getServiceProductsAsAds)
 router.get('/like/:like/:id', auth.VerifyToken, controller.likeAllParams)
 
-
+router.get('/search',controller.searchFromAll)
 module.exports = router;

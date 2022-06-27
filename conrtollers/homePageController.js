@@ -412,7 +412,7 @@ let getProductsAsAds = async (req, res, next) => {
                 let data = {
                     id: x.id,
                     "tertip_nomer": 99999,
-                    "ads_type_id": x.bolum_id===2?4:x.bolum_id===3?5:6,
+                    "ads_type_id": x.bolum_id === 2 ? 4 : x.bolum_id === 3 ? 5 : 6,
                     "product_id": x.id,
                     "ads_photo": x.product_photo,
                     "ads_description": x.description,
@@ -478,7 +478,7 @@ async function getDetailOfAds(row) {
         switch (row.ads_type_id) {
             case 4:
             case 5:
-            case 6:{
+            case 6: {
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then((rows) => {
                     row.detail = rows.length ? rows[0] : {};
                     return row;
@@ -504,7 +504,7 @@ async function getDetailOfAds(row) {
             }
             case 1:
             case 3:
-            case 9:{
+            case 9: {
                 return await promiseFunctions.queryExequterWithThenBlock(queries.GETSHOPBYID({id: row.shop_id})).then((rows) => {
                     row.detail = rows.length ? rows[0] : {};
                     return row;
@@ -532,6 +532,23 @@ async function getDetailOfAds(row) {
         return row;
 }
 
+const searchFromAll = async (req, res) => {
+    let {query} = req.url_queries
+    query = '%'+query+'%' || ''
+    if (query.length === 0) {
+        return sender.sendSuccess(res, [])
+    }
+    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_SEARCH_SHOP, [query,query,query,query])
+        .then(rows => {
+
+
+            return sender.sendSuccess(res,rows)
+        }).catch(err => {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang)
+        })
+}
+
 
 module.exports = {
     getAllBanners,
@@ -550,5 +567,6 @@ module.exports = {
     getAllBrands,
     likeAllParams,
     getProductsAsAds,
-    getServiceProductsAsAds
+    getServiceProductsAsAds,
+    searchFromAll
 }

@@ -258,7 +258,8 @@ let loginFunction = async (req, res) => {
                 var token = webtoken.sign({
                         user_id: rows[0].id,
                         number: tel
-                    }, settings.APISECRETKEY,
+                    },
+                    settings.APISECRETKEY,
                     {
                         expiresIn: '1000000h'
                     });
