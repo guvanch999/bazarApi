@@ -3,7 +3,7 @@ const e = require('../utils/lang')
 const queries = require('../sqlqueries/singinqueries');
 const webtoken = require('jsonwebtoken');
 const settings = require('../settings/usersettings');
-const admin = require('../utils/firebase-config');
+const admin = require('../utils/firebase-config')._smsAppPushApp;
 const {validationResult} = require("express-validator");
 const sender = require('../utils/sendRespond')
 const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
@@ -212,12 +212,12 @@ let checkNumberFunction = async (req, res) => {
             if (rows && rows.length) {
                 return res.status(200).json({
                     success: true,
-                    isRegistred:true
+                    isRegistred: true
                 });
             } else {
                 return res.status(200).json({
                     success: true,
-                    isRegistred:false
+                    isRegistred: false
                 });
             }
         }).catch(err => {
@@ -228,8 +228,8 @@ let checkNumberFunction = async (req, res) => {
 
 
 let loginFunction = async (req, res) => {
-    let {tel, code} = req.body;
-    if (!tel || !code) {
+    let {tel, code, fcm_token} = req.body;
+    if (!tel || !code || !fcm_token) {
         return sender.sendRespondInvalidParams(res, req.lang)
     }
     return await queryExequterWithThenBlock(queries.DELETEUPTIMEVERIF + Date.now())
@@ -254,6 +254,7 @@ let loginFunction = async (req, res) => {
         }).then(async rows => {
             if (rows && rows.length) {
                 await pool.query(queries.DELETENUMBER + tel);
+                await pool.query(queries.UPDATE_USER_TOKEN, [fcm_token, rows[0].id])
                 var token = webtoken.sign({
                         user_id: rows[0].id,
                         number: tel

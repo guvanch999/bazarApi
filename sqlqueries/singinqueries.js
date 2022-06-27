@@ -13,6 +13,7 @@ module.exports={
           'from user_adress ua ' +
           'inner join adress a on a.id=ua.adress_id ' +
           'inner join adress_welayat aw on aw.id=a.adress_welayat_id ' +
-          'where ua.user_id=?'
+          'where ua.user_id=?',
+      UPDATE_USER_TOKEN:'update users set register_kod=? where id=?'
 
 }

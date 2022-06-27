@@ -1,6 +1,8 @@
 const sender = require('../utils/sendRespond')
 const queries = require('../sqlqueries/ordersQueries')
 const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
+const {sentNewOrderNotificationToShop} = require("../utils/useFullFunctions");
+
 module.exports = {
     async getProductList(req, res) {
         if (!req.user.user_id) {
@@ -182,12 +184,13 @@ module.exports = {
                 if (data.used_from_bonus_bank) {
                     await queryExequterWithThenBlock(queries.DECREESE_BONUCE_BANK, [data.used_from_bonus_bank, data.shop_id, user_id])
                 }
+                console.log(shopDetail)
+                sentNewOrderNotificationToShop(shopDetail[0].id)
                 return sender.sendSuccess(res, {orderId})
             }).catch(err => {
                 console.log(err)
                 return sender.sendRespondInternalSErr(res, req.lang);
             })
-
     },
     async getPyOrders(req, res) {
         if (!req.user.user_id) {

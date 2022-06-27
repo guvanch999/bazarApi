@@ -67,6 +67,6 @@ module.exports = {
         return s
     },
     GET_SIZE_BY_ID: 'select * from sizes where id=?',
-    GET_SHOP_NAME: 'select shop_name from shop where id=?',
+    GET_SHOP_NAME: 'select id,shop_name from shop where id=?',
     UPDATE_ORDER_KODE: "update sargytlar set sargyt_kody=? where id=?"
 }

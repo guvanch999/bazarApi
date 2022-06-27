@@ -1187,6 +1187,17 @@ CREATE TABLE `zurnal_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+create table shop_service_tokens(
+    id int(11) not null,
+    shop_id int(11) not null default 0,
+    service_shop_id int(11) not null default 0,
+    isRestoran tinyint(1) not null default 0,
+    token text not null
+);
+
+alter table shop_service_tokens add column isRestoran tinyint(1) not null default 0;
+
+
 create table sms_apps(
     id int(10) NOT NULL,
     device_name text not null,
