@@ -11,8 +11,7 @@ module.exports = {
         let hasBolumId=false;
         if (params.filter) {
             params.filterValues.forEach(filter => {
-                console.log(filter);
-                if(filter.key==='bolum_id')hasBolumId=true;
+                if(filter.key==='bolum_id' || filter.key==='katalog_id')hasBolumId=true;
                 s += ` and ${filter.key} = '${filter.value}' `
             })
         }
