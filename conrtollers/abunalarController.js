@@ -65,7 +65,8 @@ let typesOfRating = {
     },
     'SERVICE_PRODUCT': {
         tableName: "rating_service_product",
-        idColumn: "product_id"
+        idColumn: "product_id",
+        updateQuery: 'update service_product set rate=(select sum(rating_count) from rating_service_product where product_id=?)/(select count(*) from rating_service_product where product_id=?) where id=?'
     },
     'SHOP': {
         tableName: "rating_shops",
@@ -73,7 +74,8 @@ let typesOfRating = {
     },
     'PRODUCT': {
         tableName: "rating_products",
-        idColumn: "product_id"
+        idColumn: "product_id",
+        updateQuery: 'update product set rating=(select sum(rating_count) from rating_products where product_id=?)/(select count(*) from rating_products where product_id=?) where id=?'
     }
 }
 
@@ -130,12 +132,15 @@ module.exports = {
                 let objNeed = {user_id, rating_count};
                 objNeed[typesOfRating[type].idColumn] = id;
                 if (rows.length) {
-                    return await queryExequterWithThenBlock(queries.UPDATE_RATING,[typesOfRating[type].tableName,objNeed,rows[0].id])
+                    return await queryExequterWithThenBlock(queries.UPDATE_RATING, [typesOfRating[type].tableName, objNeed, rows[0].id])
                 } else {
                     return await queryExequterWithThenBlock(queries.ADD_RATING, [typesOfRating[type].tableName, objNeed])
                 }
-            }).then(()=>{
-                return sender.sendSuccess(res,{success:true})
+            }).then(async () => {
+                if (typesOfRating[type].updateQuery) {
+                    await queryExequterWithThenBlock(typesOfRating[type].updateQuery,[id,id,id])
+                }
+                return sender.sendSuccess(res, {success: true})
             }).catch(err => {
                 console.log(err)
                 return sender.sendRespondInternalSErr(res, req.lang)
