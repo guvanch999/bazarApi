@@ -3,7 +3,7 @@ module.exports = {
     SHOPDETAILSFULL: (params) => `select * from shop where id=${params.id}`,
     SHOPADSBYID: (params) => `select * from ads_fromshops where shop_id=${params.id}`,
     SHOPBANNERS: `select * from shop_banner where shop_id=?`,
-    SHOP_VIDEOS: "select * from shop_videos where shop_id=?",
+    SHOP_VIDEOS: "select * from shop_videos where shop_id=? and verify=1",
     FOLLOW_COUNT: "select count(*) as total from follow where shop_id=?",
     SHOPKATALOGS: (params) => `select k.* from katalog as k inner join shop_katalog as sk on k.id=sk.katalog_id where sk.shop_id=${params.id}`,
 

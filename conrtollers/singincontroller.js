@@ -156,6 +156,7 @@ var finishsingup = async (req, res) => {
     var _fcmtocken = req.body.fcmtoken;
     let adress_welayat_id = req.body.adress_welayat_id;
     let jynsy = req.body.jynsy
+    let promo_kod=req.body.promo_kod||null
     if (!_fcmtocken || !_number || !jynsy || !adress_welayat_id || !_name) {
         return res.status(400).json({
             success: false,
@@ -184,7 +185,23 @@ var finishsingup = async (req, res) => {
                     });
                     return result.insertId
                 }
-            }).then(user_id => {
+            }).then(async user_id => {
+                if(promo_kod) {
+                    let promokod_id=0;
+                    await queryExequterWithThenBlock(queries.CHECK_PROMO_KOD,[promo_kod])
+                        .then(async rows=>{
+                            if(rows.length){
+                                promokod_id=rows[0].id;
+                                return await queryExequterWithThenBlock(queries.CHECK_USER_PROMO_CODE,[user_id,rows[0].id])
+                            } else {
+                                return false
+                            }
+                        }).then(async rows=>{
+                            if(rows && rows.length===0){
+                                await queryExequterWithThenBlock(queries.CONNECT_PROMOKOD_TO_USER,[promokod_id,user_id])
+                            }
+                        })
+                }
                 var token = webtoken.sign({
                         user_id,
                         number: _number
