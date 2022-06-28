@@ -15,7 +15,7 @@ module.exports = {
 
     //ads_lary priducd datail bn cekmeli ikinji sahypa; hyzmat id hem gelip biilyar barlamaly is_product bn, {shop yada servese shop ady bn suratyny almaly}, {added date gelmeli}
     ADSFROMSHOP: "select * from ads_fromshops where checked=1 order by tertip_nomer asc;",
-    ADSFROMSHOPPAGE: (params) => `select * from ads_fromshops where verify=1 order by tertip_nomer asc limit 16 offset ${params.skip};`,
+    ADSFROMSHOPPAGE: (params) => `select * from ads_fromshops where verify=1 order by RAND() limit 16 offset ${params.skip};`,
 
     SHOPDETAILSPhotoAndname: (params) => `select photo,shop_name,shop_nameRU from shop where id=${params.id}`,
     SERVICESHOPS: (params) => `select photo,service_shops_name,service_shops_nameRU from service_shops where id=${params.id}`,
@@ -90,8 +90,8 @@ module.exports = {
     GETALLBRANDS: `select * from brend`,
     GET_IDS_FROM_KATALOG: 'select id from katalog where visible=1 and bolum_id=',
     GET_BRAND_BY_BOLUM_ID: "select * from brend where (katalog_ids like '%,${katalog_id},%') or (katalog_ids like '${katalog_id},%') or (katalog_ids like '%,${katalog_id}')  ",
-    GET_PRODUCT_FOR_ADS: 'select p.*,(select pp.photo from product_photo pp where pp.product_id=p.id order by pp.esasy desc limit 1 ) as product_photo from product p where p.verify=1 order by p.vip desc limit ? offset ?;',
-    GET_SERVICE_PRODUCT_FOR_ADS: 'select p.*,(select pp.photo from service_product_photo pp where pp.service_product_id=p.id  limit 1 ) as product_photo from service_product p where p.verify=1 order by p.vip desc limit ? offset ?;',
+    GET_PRODUCT_FOR_ADS: 'select p.*,(select pp.photo from product_photo pp where pp.product_id=p.id order by RAND() limit 1 ) as product_photo from product p where p.verify=1 order by RAND() limit ? offset ?;',
+    GET_SERVICE_PRODUCT_FOR_ADS: 'select p.*,(select pp.photo from service_product_photo pp where pp.service_product_id=p.id  limit 1 ) as product_photo from service_product p where p.verify=1 order by RAND() limit ? offset ?;',
 
     GET_SEARCH_SHOP: `select * from ( (select s.id, s.shop_name as name, s.description, s.descriptionRU, s.photo, 1 as searchType,(select sb.bolum_id from shop_bolum sb  where sb.shop_id=s.id limit 1) as bolum_id  from shop s where s.verify=1 and UPPER(concat(IFNULL(s.shop_name,''),IFNULL(s.shortDescription,''),IFNULL(s.shortDescriptionRU,''),IFNULL(s.description,''),IFNULL(s.descriptionRU,''))) like UPPER(?) order by vip limit 5)
                      UNION 
