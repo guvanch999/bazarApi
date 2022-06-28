@@ -23,7 +23,7 @@ module.exports = {
     SHOP_LENTA: (params) => `select s.shop_name,s.photo as shopPhoto,s.vip,sl.* from shop_lenta sl inner join shop s on s.id=sl.shop_id where sl.shop_id in (select shop_id from follow where shop_id>0 and user_id=?) limit ${params.offset}, ${params.limit};`,
 
     GET_ALL_VIDEOS:`select * from (
-            (select 'SHOP' as type, sv.* from shop_videos sv where cv.verify=1 )
+            (select 'SHOP' as type, sv.* from shop_videos sv where sv.verify=1 )
             union all
             (select 'SERVICE' as type,  sev.* from service_videos sev where sev.verify=1)
         ) results order by created_date desc limit ?,20;`,
