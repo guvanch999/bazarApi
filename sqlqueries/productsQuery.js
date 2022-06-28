@@ -54,5 +54,6 @@ module.exports = {
     GET_ALL_COLORS: "select * from colors",
     GET_BONUS_FOR_PRODUCT: 'select b.* from bonus_user bu inner join bonus b on b.id=bu.bonus_id and b.shop_id=? where bu.user_id=?',
     GET_ARZANLADYSH_FOR_PRODUCT: 'select ak.* from arzanladysh_kart_user au inner join arzanladysh_kart ak on ak.id=au.arzanladysh_id and ak.shop_id=? where au.user_id=? and au.status=1',
-    GET_ISLIKED: 'select * from like_products where user_id=? and product_id=?'
+    GET_ISLIKED: 'select * from like_products where user_id=? and product_id=?',
+    INCREASE_VIEW_COUNT: 'update product set seen=IFNULL(seen,0)+1 where id=?'
 }

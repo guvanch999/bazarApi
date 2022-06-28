@@ -16,6 +16,10 @@ var productDetailsFull = async (req, res) => {
         if (!product.length) {
             return sender.sendNoProductDetails(res, req.lang);
         }
+        let isViewed = req.url_queries.isViewed || false
+        if (isViewed) {
+            await promiseFunctions.queryExequterWithThenBlock(queries.INCREASE_VIEW_COUNT, [p_id])
+        }
         let sizes = await promiseFunctions.queryExequterWithThenBlock(queries.PRODUCTSIZE({id: p_id}))
         let productCount = await promiseFunctions.queryExequterWithThenBlock(queries.SHOPPRODUCTCOUNT(product[0].shop_id))
         let detail = Object.assign({productCount: productCount[0].total}, product[0])
@@ -23,7 +27,7 @@ var productDetailsFull = async (req, res) => {
         let ratings = await queryExequterWithThenBlock(queries.SELECT_RATING_OF_PRODUCT, [p_id]);
         let rating = calculateRating(ratings)
         rating['totalRatingCount'] = ratings.length;
-        if (req.user.user_id>0) {
+        if (req.user.user_id > 0) {
             console.log("birinji")
             if (detail.bonus) {
                 let bonus = await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT, [detail.shop_id, req.user.user_id]);
@@ -92,7 +96,7 @@ var getAllProducts = async (req, res) => {
                 }
 
             }
-            if (req.user.user_id>0) {
+            if (req.user.user_id > 0) {
                 for (let i = 0; i < rows.length; i++) {
                     if (rows[i].bonus) {
                         let bonus = await promiseFunctions.queryExequterWithThenBlock(queries.GET_BONUS_FOR_PRODUCT, [rows[i].shop_id, req.user.user_id]);

@@ -303,6 +303,19 @@ let getAllUsers = async (req, res) => {
         return sender.sendSuccess(res, rows)
     })
 }
+let increaseViewCount = async (req, res) => {
+    let {id} = req.params;
+
+    let {shop_type} = req.url_queries;
+    let table_name = shop_type === 'SHOP' ? 'shop_videos' : 'service_videos'
+    return await queryExequterWithThenBlock(queries.ADD_VEW_COUNT, [table_name, id])
+        .then(() => {
+            return sender.sendSuccess(res, {success: true})
+        }).catch(err => {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang)
+        })
+}
 
 
 function GETRANDOM() {
@@ -316,5 +329,6 @@ module.exports = {
     updateUserDatas,
     getAllUsers,
     loginFunction,
-    checkNumberFunction
+    checkNumberFunction,
+    increaseViewCount
 }

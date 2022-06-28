@@ -2,6 +2,7 @@ const router = require('express').Router();
 const controller = require('../conrtollers/homePageController');
 const tokenConvertor = require('../midlwares/tokenConverter');
 const auth = require('../midlwares/authToken')
+const {getAllShopCenters} = require("../conrtollers/homePageController");
 router.get('/bannersl1', controller.getAllBanners);
 router.get('/bannerl2/:id', controller.getBannerL2);
 router.get('/catalog/:b_id', controller.getCatalogsByBolumId);
@@ -23,6 +24,6 @@ router.get('/bolumler', controller.getBolumler);
 router.post('/banners', controller.getBannerler);
 router.get('/adshome', tokenConvertor, controller.getAdsForHomePage, controller.getProductsAsAds, controller.getServiceProductsAsAds)
 router.get('/like/:like/:id', auth.VerifyToken, controller.likeAllParams)
-
+router.get('/all-shop-centers',getAllShopCenters)
 router.get('/search',controller.searchFromAll)
 module.exports = router;

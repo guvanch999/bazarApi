@@ -534,21 +534,29 @@ async function getDetailOfAds(row) {
 
 const searchFromAll = async (req, res) => {
     let {query} = req.url_queries
-    query = '%'+query+'%' || ''
+    query = '%' + query + '%' || ''
     if (query.length === 0) {
         return sender.sendSuccess(res, [])
     }
-    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_SEARCH_SHOP, [query,query,query,query])
+    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_SEARCH_SHOP, [query, query, query, query])
         .then(rows => {
 
 
-            return sender.sendSuccess(res,rows)
+            return sender.sendSuccess(res, rows)
         }).catch(err => {
             console.log(err)
             return sender.sendRespondInternalSErr(res, req.lang)
         })
 }
-
+let getAllShopCenters = async (req, res) => {
+    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_SHOP_CENTERS)
+        .then(rows => {
+            return sender.sendSuccess(res, rows)
+        }).catch(err => {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang)
+        })
+}
 
 module.exports = {
     getAllBanners,
@@ -568,5 +576,6 @@ module.exports = {
     likeAllParams,
     getProductsAsAds,
     getServiceProductsAsAds,
-    searchFromAll
+    searchFromAll,
+    getAllShopCenters
 }

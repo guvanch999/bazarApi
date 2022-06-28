@@ -3,6 +3,7 @@ const queries = require('../sqlqueries/hyzmatlarQueries');
 const sender = require('../utils/sendRespond');
 const {isUndefined} = require("util");
 const promiseFunction = require('../utils/promisiFunctions')
+const promiseFunctions = require("../utils/promisiFunctions");
 
 var getServiceKatalogs = async (req, res) => {
     var id = req.params.id;
@@ -77,8 +78,11 @@ let getProductDetail = async (req, res) => {
     } else {
         data['isLiked'] = 0
     }
+    let isViewed = req.url_queries.isViewed || false
+    if (isViewed) {
+        await promiseFunctions.queryExequterWithThenBlock(queries.INCREASE_VIEW_COUNT, [product_id])
+    }
     return sender.sendSuccess(res, data)
-
 }
 module.exports = {
     getServiceKatalogs,

@@ -14,6 +14,7 @@ module.exports={
           'inner join adress a on a.id=ua.adress_id ' +
           'inner join adress_welayat aw on aw.id=a.adress_welayat_id ' +
           'where ua.user_id=?',
-      UPDATE_USER_TOKEN:'update users set register_kod=? where id=?'
+      UPDATE_USER_TOKEN:'update users set register_kod=? where id=?',
+      ADD_VEW_COUNT:'update ?? set goren_sany=IFNULL(goren_sany,0)+1 where id=?'
 
 }

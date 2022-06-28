@@ -31,8 +31,8 @@ module.exports = {
 
 
     BOLUM: "select * from bolum order by tertip_nomer asc;",
-    SHOPSL2: (b_id, isRestoran) => `select s.* from shop s where  s.Restoran=${isRestoran} and s.id in (select sb.shop_id from reklama_shops sb where sb.bolum_id=${b_id}) limit 6`,
-    VIPSERVICESC6: "select * from service_shops limit 6;",
+    SHOPSL2: (b_id, isRestoran) => `select s.* from shop s where verify = 1 and   s.Restoran=${isRestoran} and s.id in (select sb.shop_id from reklama_shops sb where sb.bolum_id=${b_id}) limit 6`,
+    VIPSERVICESC6: "select * from service_shops where verify=1 limit 6;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
     CATALOG: (params) => {
         var s = `select k.*,(select count(*) from category c where c.katalog_id=k.id) as categoryCount from katalog k where ${params.id>0?'k.bolum_id='+params.id+' and ':''} visible=1`;
@@ -100,5 +100,6 @@ module.exports = {
                      (select s.id, s.product_name as name, s.description, s.descriptionRU, null as photo, 3 as searchType,s.bolum_id  from product s where s.verify=1 and UPPER(concat(IFNULL(s.product_name,''),IFNULL(s.description,''),IFNULL(s.descriptionRU,''))) like UPPER(?) order by vip limit 5)
                      UNION
                      (select s.id, s.name, s.description, s.descriptionRU, null as photo, 4 as searchType,1 as bolum_id  from service_product s where s.verify=1 and UPPER(concat(IFNULL(s.name,''),IFNULL(s.nameRU,''),IFNULL(s.description,''),IFNULL(s.descriptionRU,''))) like UPPER(?) order by vip limit 5)
-                     ) results`
+                     ) results`,
+    GET_SHOP_CENTERS: 'select * from shop_center'
 }
