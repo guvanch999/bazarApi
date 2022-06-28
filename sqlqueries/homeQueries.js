@@ -1,6 +1,6 @@
 module.exports = {
     GETALLBANNERS: "select * from esasy_sahypa_banner order by id desc;",
-    GETALLBOLUMLER: `select * from bolum;`,
+    GETALLBOLUMLER: `select * from bolum where visible=1;`,
 
     //uc sany magazinlary chekdirmeli main_shopsDan
     GETMAINSHOPS: (params) => `select * from shop limit 10`,
@@ -30,7 +30,7 @@ module.exports = {
     //done
 
 
-    BOLUM: "select * from bolum order by tertip_nomer asc;",
+    BOLUM: "select * from bolum where visible=1 order by tertip_nomer asc;",
     SHOPSL2: (b_id, isRestoran) => `select s.* from shop s where verify = 1 and   s.Restoran=${isRestoran} and s.id in (select sb.shop_id from reklama_shops sb where sb.bolum_id=${b_id}) limit 6`,
     VIPSERVICESC6: "select * from service_shops where verify=1 limit 6;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
@@ -66,14 +66,14 @@ module.exports = {
         return s;
     },
     CATEGORIES: (params) => {
-        var s = `select * from category where katalog_id=${params.id}`;
+        var s = `select * from category where visible=1 and katalog_id=${params.id} `;
         return s;
     },
     SUBCATEGORIES: (params) => {
-        var s = `select * from subcategory where category_id=${params.id}`;
+        var s = `select * from subcategory where visible=1 and  category_id=${params.id}`;
         return s;
     },
-    SUB_BY_CATEGORIESIDS: `select * from subcategory where katalog_id =?`,
+    SUB_BY_CATEGORIESIDS: `select * from subcategory where visible=1 and katalog_id =?`,
     ALLSHOPS: (params) => `select s.* from shop as s inner join bolum_shop as bs on bs.shop_id=s.id where bs.bolum_id=${params.id}`,
     GETBANNERSWITHPARAMS: (params) => {
         let s = `select * from banner where 1=1 `
@@ -88,7 +88,7 @@ module.exports = {
     },
 
     GETALLBRANDS: `select * from brend`,
-    GET_IDS_FROM_KATALOG: 'select id from katalog where bolum_id=',
+    GET_IDS_FROM_KATALOG: 'select id from katalog where visible=1 and bolum_id=',
     GET_BRAND_BY_BOLUM_ID: "select * from brend where (katalog_ids like '%,${katalog_id},%') or (katalog_ids like '${katalog_id},%') or (katalog_ids like '%,${katalog_id}')  ",
     GET_PRODUCT_FOR_ADS: 'select p.*,(select pp.photo from product_photo pp where pp.product_id=p.id order by pp.esasy desc limit 1 ) as product_photo from product p where p.verify=1 order by p.vip desc limit ? offset ?;',
     GET_SERVICE_PRODUCT_FOR_ADS: 'select p.*,(select pp.photo from service_product_photo pp where pp.service_product_id=p.id  limit 1 ) as product_photo from service_product p where p.verify=1 order by p.vip desc limit ? offset ?;',
