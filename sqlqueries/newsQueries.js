@@ -25,7 +25,7 @@ module.exports = {
     GET_ALL_VIDEOS:`select * from (
             (select 'SHOP' as type, sv.* from shop_videos sv where cv.verify=1 )
             union all
-            (select 'SERVICE' as type,  sev.* from service_videos sev where verify=1)
+            (select 'SERVICE' as type,  sev.* from service_videos sev where sev.verify=1)
         ) results order by created_date desc limit ?,20;`,
     GET_SHOP_DETAIL_FOR_VIDEO:"select shop_name,photo,vip,Restoran,shortDescription,shortDescriptionRU from shop where id=?",
     GET_SERVICE_DETAIL_FOR_VIDEO:"select service_shops_name as shop_name,photo,vip from service_shops where id=?",
