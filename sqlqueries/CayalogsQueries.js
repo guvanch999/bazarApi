@@ -15,7 +15,7 @@ module.exports = {
 
 
      GETCATALOGSWITHFILTER: (params) => {
-          let s = "select * from katalog  where `visible`="+params.verify+' '
+          let s = "select * from katalog  where visible=1  "
 
           if (params.filter) {
                params.filterValues.forEach(filter=>{
