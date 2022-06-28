@@ -8,19 +8,18 @@ module.exports = {
     //product detailda color maglumatlaryny ugratmaly
     GETPRODUCTSBYFILTERANDSEARCH: (params) => {
         let s = `select * from product  where verify=${params.verify} `
-
+        let hasShopId=false;
         if (params.filter) {
             params.filterValues.forEach(filter => {
                 console.log(filter);
+                if(filter.key==='shop_id')hasShopId=true;
                 s += ` and ${filter.key} = '${filter.value}' `
             })
         }
         if (params.query) {
             s += ` and UPPER(concat(description,descriptionRU,product_name,product_nameRU)) like UPPER('%${params.query}%') `
         }
-        if (params.mustsort) {
-            s += ` order by ${params.sortFeild} ${params.sortValue} `
-        }
+        if(hasShopId)s+='  order by RAND()  '
         s += ` limit ${params.offset}, ${params.limit}`
 
         console.log(s);
