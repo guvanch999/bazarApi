@@ -3,7 +3,7 @@ module.exports = {
     GETALLBOLUMLER: `select * from bolum where visible=1;`,
 
     //uc sany magazinlary chekdirmeli main_shopsDan
-    GETMAINSHOPS: (params) => `select * from shop limit 10`,
+    GETMAINSHOPS: (params) => `select * from shop where vip=1 order by Rand() limit 3`,
     //done
 
 
@@ -32,7 +32,7 @@ module.exports = {
 
     BOLUM: "select * from bolum where visible=1 order by tertip_nomer asc;",
     SHOPSL2: (b_id, isRestoran) => `select s.* from shop s where verify = 1 and   s.Restoran=${isRestoran} and s.id in (select sb.shop_id from reklama_shops sb where sb.bolum_id=${b_id}) limit 6`,
-    VIPSERVICESC6: "select * from service_shops where verify=1 limit 6;",
+    VIPSERVICESC6: "select * from service_shops where verify=1 limit 3;",
     BANNERL2: (params) => `select * from banner where bolum_id=${params.id};`,//eger yok bolse bolum_id==0 chekdirmeli    //done
     CATALOG: (params) => {
         var s = `select k.*,(select count(*) from category c where c.katalog_id=k.id) as categoryCount from katalog k where ${params.id>0?'k.bolum_id='+params.id+' and ':''} visible=1`;
