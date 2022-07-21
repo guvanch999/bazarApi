@@ -121,7 +121,18 @@ module.exports = {
                 for (let i = 0; i < rows.length; i++) {
                     if (rows[i].type === 'SHOP') {
                         let shop = await queryExequterWithThenBlock(queries.GET_SHOP_DETAIL_FOR_VIDEO, [rows[i].shop_id])
-                        rows[i]['shopDetail'] = shop.length ? shop[0] : null
+                        if(shop.length){
+                            rows[i]['shopDetail'] =  shop[0]
+                            if(!shop[0].Restoran){
+                                let bolum=await queryExequterWithThenBlock(
+                                    queries.GET_BOLUM_ID_OF_SHOP,[rows[i].shop_id])
+                                rows[i]['shopDetail']['bolum_id']=bolum.length?bolum[0].bolum_id:null
+                            }
+                        } else {
+                            rows[i]['shopDetail'] =  null
+                        }
+
+
                     } else {
                         let shop = await queryExequterWithThenBlock(queries.GET_SERVICE_DETAIL_FOR_VIDEO, [rows[i].shop_id])
                         rows[i]['shopDetail'] = shop.length ? shop[0] : null

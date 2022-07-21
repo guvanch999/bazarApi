@@ -43,5 +43,6 @@ module.exports = {
 
     GET_LIST_OF_TOPLANAN:'select c.*,(select count(*) from collection_items ci where ci.collection_id=c.id) as productCount from collections c limit ?, ?',
     GET_TOPLANAN_ITEMS_PRODUCT:'select * from product where verify=1 and id in (select product_id from collection_items where collection_id=?) limit ?,?',
+    GET_BOLUM_ID_OF_SHOP:'select bolum_id from shop_bolum where shop_id=?'
 
 }

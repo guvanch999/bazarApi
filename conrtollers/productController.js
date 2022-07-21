@@ -16,8 +16,8 @@ var productDetailsFull = async (req, res) => {
         if (!product.length) {
             return sender.sendNoProductDetails(res, req.lang);
         }
-        let isViewed = req.url_queries.isViewed || false
-        if (isViewed) {
+        let incCount = req.url_queries.incCount || false
+        if (incCount) {
             await promiseFunctions.queryExequterWithThenBlock(queries.INCREASE_VIEW_COUNT, [p_id])
         }
         let sizes = await promiseFunctions.queryExequterWithThenBlock(queries.PRODUCTSIZE({id: p_id}))

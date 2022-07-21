@@ -78,8 +78,8 @@ let getProductDetail = async (req, res) => {
     } else {
         data['isLiked'] = 0
     }
-    let isViewed = req.url_queries.isViewed || false
-    if (isViewed) {
+    let incCount = req.url_queries.incCount || false
+    if (incCount) {
         await promiseFunctions.queryExequterWithThenBlock(queries.INCREASE_VIEW_COUNT, [product_id])
     }
     return sender.sendSuccess(res, data)
