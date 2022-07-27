@@ -16,9 +16,18 @@ module.exports = {
             })
         }
         if (params.query) {
-            s += ` and UPPER(concat(description,descriptionRU,product_name,product_nameRU)) like UPPER('%${params.query}%') `
+            s += ` and UPPER(concat(description,descriptionRU,product_name)) like UPPER('%${params.query}%') `
         }
-        if(hasBolumId)s+='  order by RAND()  '
+        if(params.minPrice){
+            s+=` and price >= ${params.minPrice} `
+        }
+        if(params.maxPrice){
+            s+=` and price <= ${params.maxPrice} `
+        }
+        if(params.sort){
+            s+=`  order by  ${params.sort.key} ${params.sort.value}`
+        } else
+            if(hasBolumId)s+='  order by RAND()  '
         s += ` limit ${params.offset}, ${params.limit}`
 
         console.log(s);
@@ -35,7 +44,13 @@ module.exports = {
             })
         }
         if (params.query) {
-            s += ` and UPPER(concat(description,descriptionRU,product_name,product_nameRU)) like UPPER('%${params.query}%') `
+            s += ` and UPPER(concat(description,descriptionRU,product_name)) like UPPER('%${params.query}%') `
+        }
+        if(params.minPrice){
+            s+=` and price >= ${params.minPrice} `
+        }
+        if(params.maxPrice){
+            s+=` and price <= ${params.maxPrice} `
         }
         console.log(s);
         return s;

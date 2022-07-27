@@ -522,11 +522,12 @@ CREATE TABLE `product` (
   `modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `verify` tinyint(1) NOT NULL DEFAULT '0',
   `otkaz` tinyint(1) NOT NULL DEFAULT '0',
-  `otkaz_tekst` text
+  `otkaz_tekst` text,
+  `ondurijiler_id` int(11) not null default '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-alter table product add column bonus int(11) not null default '1';
+alter table product add column ondurijiler_id int(11) not null default '0';
 create table products_type(
 id int(11) not null,
 type varchar(255) default null
