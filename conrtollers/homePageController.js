@@ -558,6 +558,16 @@ let getAllShopCenters = async (req, res) => {
         })
 }
 
+let getAllOndurijiler=async (req,res)=>{
+    return await promiseFunctions.queryExequterWithThenBlock(queries.GET_ALL_ONDURUJILER)
+        .then(rows=>{
+            return sender.sendSuccess(res,rows)
+        }).catch(err=>{
+            console.log(err)
+            return sender.sendRespondInternalSErr(res,req.lang)
+        })
+}
+
 module.exports = {
     getAllBanners,
     getBannerL2,
@@ -577,5 +587,6 @@ module.exports = {
     getProductsAsAds,
     getServiceProductsAsAds,
     searchFromAll,
-    getAllShopCenters
+    getAllShopCenters,
+    getAllOndurijiler
 }

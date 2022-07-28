@@ -24,6 +24,9 @@ router.get('/bolumler', controller.getBolumler);
 router.post('/banners', controller.getBannerler);
 router.get('/adshome', tokenConvertor, controller.getAdsForHomePage, controller.getProductsAsAds, controller.getServiceProductsAsAds)
 router.get('/like/:like/:id', auth.VerifyToken, controller.likeAllParams)
-router.get('/all-shop-centers',getAllShopCenters)
-router.get('/search',controller.searchFromAll)
+router.get('/all-shop-centers', getAllShopCenters)
+router.get('/search', controller.searchFromAll)
+router.get('/ondurijiler', controller.getAllOndurijiler)
+
+
 module.exports = router;

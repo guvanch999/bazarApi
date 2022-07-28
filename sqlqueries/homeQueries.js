@@ -102,5 +102,6 @@ module.exports = {
                      UNION
                      (select s.id, s.name, s.description, s.descriptionRU, null as photo, 4 as searchType,1 as bolum_id  from service_product s where s.verify=1 and UPPER(concat(IFNULL(s.name,''),IFNULL(s.nameRU,''),IFNULL(s.description,''),IFNULL(s.descriptionRU,''))) like UPPER(?) order by vip limit 5)
                      ) results`,
-    GET_SHOP_CENTERS: 'select * from shop_center'
+    GET_SHOP_CENTERS: 'select * from shop_center',
+    GET_ALL_ONDURUJILER:'select * from ondurijiler'
 }
