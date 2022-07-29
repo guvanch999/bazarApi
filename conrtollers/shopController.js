@@ -167,7 +167,6 @@ async function getFullShopDetail(shop_id, user_id) {
                 rating['totalRatingCount'] = ratings.length;
                 data['rating'] = rating;
                 let fullAddress = address.length ? address[0].address : ''
-
                 for (let index in listVideos) {
                     if (user_id) {
                         let checkIsLiked = await queryExequterWithThenBlock(CHECK_IS_LIKED_FOR_VIDEO, [user_id, {shop_video_id: listVideos[index].id}])

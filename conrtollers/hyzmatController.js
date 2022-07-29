@@ -57,7 +57,8 @@ let getServiceDetail = async (req, res) => {
     if (!service_id) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    let data = await queries.getServiceDetail(service_id);
+    let {user_id}=req.user;
+    let data = await queries.getServiceDetail(service_id,user_id);
     if (!data) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }

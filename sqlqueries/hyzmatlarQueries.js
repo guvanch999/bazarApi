@@ -1,5 +1,6 @@
 const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
 const shopQueries = require("../sqlqueries/serviceShops");
+const {CHECK_IS_LIKED_FOR_VIDEO} = require("./newsQueries");
 const {isUndefined} = require("util");
 const {calculateRating} = require("../utils/useFullFunctions");
 module.exports = {
@@ -54,7 +55,7 @@ module.exports = {
             return false;
         })
     },
-    async getServiceDetail(service_id) {
+    async getServiceDetail(service_id,user_id) {
         return await queryExequterWithThenBlock(shopQueries.SERVICEDETAILS + service_id)
             .then(rows => {
                 if (rows.length) {
@@ -75,6 +76,16 @@ module.exports = {
                     data['rating'] = rating;
                     let katalog_name = katalogs.length ? katalogs[0].katalog_name : "";
                     let katalog_nameRU = katalogs.length ? katalogs[0].katalog_nameRU : "";
+
+                    for (let index in listVideos) {
+                        if (user_id) {
+                            let checkIsLiked = await queryExequterWithThenBlock(CHECK_IS_LIKED_FOR_VIDEO, [user_id, {service_video_id: listVideos[index].id}])
+                            listVideos[index]['isLiked'] = checkIsLiked.length ? 1 : 0
+                        } else {
+                            listVideos[index]['isLiked'] = 0
+                        }
+                    }
+
                     return Object.assign(data, {
                         followCount: followCount[0].total,
                         productCount: productCount[0].total,
