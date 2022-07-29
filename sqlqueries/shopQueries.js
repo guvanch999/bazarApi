@@ -57,5 +57,6 @@ module.exports = {
     COUNT_OF_SERVICE_FOLLOWERS: (params) => `select count(*) as total from follow where service_id=${params.shop_id}`,
     COUNT_OF_SERVICE_PRODUCTS: (params) => `select count(*) as total from service_product where service_id=${params.shop_id}`,
     GET_SHOP_BOLUM: "select bolum_id from shop_bolum where shop_id=?",
-    GET_COUNT_OF_FOLLOWS: 'select count(*) as total from follow where user_id=?'
+    GET_COUNT_OF_FOLLOWS: 'select count(*) as total from follow where user_id=?',
+    GET_SHOPS_FOR_FILTER:'select id,shop_name,photo from shop'
 }

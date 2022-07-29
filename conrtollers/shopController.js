@@ -144,6 +144,16 @@ var getShopsWithFilterAndSort = async (req, res) => {
     }
 }
 
+var getShops = async (req, res) => {
+    return await queryExequterWithThenBlock(queries.GET_SHOPS_FOR_FILTER)
+        .then(rows => {
+            return sender.sendSuccess(res, rows)
+        }).catch(err => {
+            console.log(err)
+            return sender.sendRespondInternalSErr(res, req.lang)
+        })
+}
+
 async function getFullShopDetail(shop_id, user_id) {
     return await queryExequterWithThenBlock(queries.SHOPDETAILSFULL({id: shop_id}))
         .then(rows => {
@@ -218,6 +228,7 @@ module.exports = {
     getBolumShops,
     getShopLenta,
     getShopsWithFilterAndSort,
+    getShops,
     async getShopCategories(req, res) {
         let {shop_id, katalog_id} = req.url_queries;
         if (!shop_id || !katalog_id) {

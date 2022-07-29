@@ -18,4 +18,7 @@ router.get('/bolum-shops/:bolum_id',controller.getBolumShops);
 
 
 router.post('/all-shops',controller.getShopsWithFilterAndSort);
+
+router.get('/all-shops',controller.getShops)
+
 module.exports = router;
