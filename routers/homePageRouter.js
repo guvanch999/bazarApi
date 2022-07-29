@@ -22,7 +22,7 @@ router.get('/allshops/:b_id', controller.getAllShopsOfBolum);
 
 router.get('/bolumler', controller.getBolumler);
 router.post('/banners', controller.getBannerler);
-router.get('/adshome', tokenConvertor, controller.getAdsForHomePage, controller.getProductsAsAds, controller.getServiceProductsAsAds)
+router.get('/adshome', auth.VerifyToken, controller.getAdsForHomePage, controller.getProductsAsAds, controller.getServiceProductsAsAds)
 router.get('/like/:like/:id', auth.VerifyToken, controller.likeAllParams)
 router.get('/all-shop-centers', getAllShopCenters)
 router.get('/search', controller.searchFromAll)

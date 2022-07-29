@@ -3,6 +3,8 @@ const queries = require('../sqlqueries/homeQueries');
 const sender = require('../utils/sendRespond');
 const functionsforUSE = require('../db/bigRequersts');
 const promiseFunctions = require('../utils/promisiFunctions')
+const {GET_ISLIKED} = require("../sqlqueries/hyzmatlarQueries");
+const productQueries = require('../sqlqueries/productsQuery')
 var getAllBanners = async (req, res) => {
     await pool.query(queries.GETALLBANNERS, (err, result) => {
         if (err) {
@@ -180,6 +182,7 @@ var getBolumler = async (req, res) => {
 }
 var getAdsForHomePage = async (req, res, next) => {
     let _page = req.url_queries.page || 1;
+    let {user_id} = req.user
     await pool.query(queries.ADSADMINONE({skip: (_page - 1) * 2}), async (err, rows) => {
         if (err) {
             console.log(err);
@@ -198,8 +201,19 @@ var getAdsForHomePage = async (req, res, next) => {
                         if (row.ads_type_id) {
                             switch (row.ads_type_id) {
                                 case 1: {
-                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then((rows) => {
-                                        row.detail = rows.length ? rows[0] : {};
+                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then(async (rows) => {
+                                        if (rows.length) {
+                                            row.detail = rows[0]
+                                            if (user_id) {
+                                                let isLiked = await promiseFunctions.queryExequterWithThenBlock(productQueries.GET_ISLIKED, [user_id, row.detail.id])
+                                                row.detail['isLiked'] = isLiked.length ? 1 : 0
+                                            } else {
+                                                row.detail['isLiked'] = 0
+                                            }
+
+                                        } else {
+                                            row.detail = {}
+                                        }
                                         return row;
                                     }).catch(err => {
                                         row.detail = {};
@@ -208,8 +222,20 @@ var getAdsForHomePage = async (req, res, next) => {
                                     break;
                                 }
                                 case 2: {
-                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then((rows) => {
-                                        row.detail = rows.length ? rows[0] : {};
+                                    return promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then(async (rows) => {
+                                        if (rows.length) {
+                                            row.detail = rows[0]
+                                            if (user_id) {
+                                                let isLiked = await promiseFunctions.queryExequterWithThenBlock(GET_ISLIKED, [user_id, rows.detail.id])
+                                                row.detail['isLiked'] = isLiked.length ? 1 : 0
+                                            } else {
+                                                row.detail['isLiked'] = 0
+                                            }
+                                        } else {
+                                            row.detail = {}
+                                        }
+
+
                                         return row;
                                     }).catch(err => {
                                         row.detail = {};
@@ -393,12 +419,13 @@ let getProductsAsAds = async (req, res, next) => {
         next()
         return;
     }
+    let {user_id} = req.user
     return await promiseFunctions.queryExequterWithThenBlock(queries.ADSADMINONE({skip: (_page - 1) * 2}))
         .then(async adsAdmin => {
             if (adsAdmin.length === 2) {
                 let list = await promiseFunctions.queryExequterWithThenBlock(queries.GET_PRODUCT_FOR_ADS, [18, (_page - 1) * 16])
                 for (let i = 0; i < adsAdmin.length; i++) {
-                    adsAdmin[i] = await getDetailOfAds(adsAdmin[i])
+                    adsAdmin[i] = await getDetailOfAds(adsAdmin[i], user_id)
                     adsAdmin[i]['fromAdmin'] = true
                     list.unshift(adsAdmin[i])
                 }
@@ -425,7 +452,17 @@ let getProductsAsAds = async (req, res, next) => {
                 data['detail'] = x;
                 return data
             })
-            return sender.sendSuccess(res, result)
+            return result;
+        }).then(async rows => {
+            for (let index in rows) {
+                if (user_id) {
+                    let isLiked = await promiseFunctions.queryExequterWithThenBlock(productQueries.GET_ISLIKED, [user_id, rows[index].detail.id])
+                    rows[index].detail['isLiked'] = isLiked.length ? 1 : 0
+                } else {
+                    rows[index].detail['isLiked'] = 0
+                }
+            }
+            return sender.sendSuccess(res, rows)
         })
         .catch(err => {
             console.log(err)
@@ -434,6 +471,7 @@ let getProductsAsAds = async (req, res, next) => {
 }
 let getServiceProductsAsAds = async (req, res) => {
     let _page = req.url_queries.page || 1;
+    let {user_id} = req.user
     return await promiseFunctions.queryExequterWithThenBlock(queries.ADSADMINONE({skip: (_page - 1) * 2}))
         .then(async adsAdmin => {
             if (adsAdmin.length === 2) {
@@ -465,7 +503,17 @@ let getServiceProductsAsAds = async (req, res) => {
                 data['detail'] = x;
                 return data
             })
-            return sender.sendSuccess(res, result)
+            return result
+        }).then(async rows => {
+            for (let index in rows) {
+                if (user_id) {
+                    let isLiked = await promiseFunctions.queryExequterWithThenBlock(GET_ISLIKED, [user_id, rows[index].detail.id])
+                    rows[index].detail['isLiked'] = isLiked.length ? 1 : 0
+                } else {
+                    rows[index].detail['isLiked'] = 0
+                }
+            }
+            return sender.sendSuccess(res, rows)
         })
         .catch(err => {
             console.log(err)
@@ -473,26 +521,50 @@ let getServiceProductsAsAds = async (req, res) => {
         })
 }
 
-async function getDetailOfAds(row) {
+async function getDetailOfAds(row, user_id) {
     if (row.ads_type_id) {
         switch (row.ads_type_id) {
             case 4:
             case 5:
             case 6: {
-                return await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id})).then((rows) => {
-                    row.detail = rows.length ? rows[0] : {};
-                    return row;
-                }).catch(err => {
-                    row.detail = {};
-                    return row
-                })
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GETPRODUCTBYID({id: row.product_id}))
+                    .then(async (rows) => {
+                        if (rows.length) {
+                            row.detail = rows[0]
+                            if (user_id) {
+                                let isLiked = await promiseFunctions.queryExequterWithThenBlock(productQueries.GET_ISLIKED, [user_id, row.detail.id])
+                                row.detail['isLiked'] = isLiked.length ? 1 : 0
+                            } else {
+                                row.detail['isLiked'] = 0
+                            }
+                        } else {
+                            row.detail = {}
+                        }
+                        return row;
+                    }).catch(err => {
+                        console.log(err)
+                        row.detail = {};
+                        return row
+                    })
                 break;
             }
             case 7: {
-                return await promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then((rows) => {
-                    row.detail = rows.length ? rows[0] : {};
+                return await promiseFunctions.queryExequterWithThenBlock(queries.GETSERVICESHOPPRODUCT({id: row.product_id})).then(async (rows) => {
+                    if (rows.length) {
+                        row.detail = rows[0]
+                        if (user_id) {
+                            let isLiked = await promiseFunctions.queryExequterWithThenBlock(GET_ISLIKED, [user_id, rows.detail.id])
+                            row.detail['isLiked'] = isLiked.length ? 1 : 0
+                        } else {
+                            row.detail['isLiked'] = 0
+                        }
+                    } else {
+                        row.detail = {}
+                    }
+
                     return row;
                 }).catch(err => {
+                    console.log(err)
                     row.detail = {};
                     return row
                 })
@@ -558,13 +630,13 @@ let getAllShopCenters = async (req, res) => {
         })
 }
 
-let getAllOndurijiler=async (req,res)=>{
+let getAllOndurijiler = async (req, res) => {
     return await promiseFunctions.queryExequterWithThenBlock(queries.GET_ALL_ONDURUJILER)
-        .then(rows=>{
-            return sender.sendSuccess(res,rows)
-        }).catch(err=>{
+        .then(rows => {
+            return sender.sendSuccess(res, rows)
+        }).catch(err => {
             console.log(err)
-            return sender.sendRespondInternalSErr(res,req.lang)
+            return sender.sendRespondInternalSErr(res, req.lang)
         })
 }
 

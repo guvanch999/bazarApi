@@ -3,6 +3,7 @@ const queries = require('../sqlqueries/shopQueries');
 const sender = require('../utils/sendRespond');
 const functionsUSE = require('../db/bigRequersts');
 const promiseFunctions = require('../utils/promisiFunctions');
+const {CHECK_IS_LIKED_FOR_VIDEO} = require("../sqlqueries/newsQueries");
 const {queryExequterWithThenBlock} = require("../utils/promisiFunctions");
 const {calculateRating} = require("../utils/useFullFunctions");
 
@@ -24,7 +25,7 @@ var getShopFullById = async (req, res) => {
     if (shop_id === undefined) {
         return sender.sendRespondInvalidParams(res, req.lang);
     }
-    let data = await getFullShopDetail(shop_id)
+    let data = await getFullShopDetail(shop_id, req.user.user_id)
     if (!data) {
         return sender.sendRespondInternalSErr(res, req.lang)
     }
@@ -143,7 +144,7 @@ var getShopsWithFilterAndSort = async (req, res) => {
     }
 }
 
-async function getFullShopDetail(shop_id) {
+async function getFullShopDetail(shop_id, user_id) {
     return await queryExequterWithThenBlock(queries.SHOPDETAILSFULL({id: shop_id}))
         .then(rows => {
             if (rows.length) {
@@ -166,6 +167,15 @@ async function getFullShopDetail(shop_id) {
                 rating['totalRatingCount'] = ratings.length;
                 data['rating'] = rating;
                 let fullAddress = address.length ? address[0].address : ''
+
+                for (let index in listVideos) {
+                    if (user_id) {
+                        let checkIsLiked = await queryExequterWithThenBlock(CHECK_IS_LIKED_FOR_VIDEO, [user_id, {shop_video_id: listVideos[index].id}])
+                        listVideos[index]['isLiked'] = checkIsLiked.length ? 1 : 0
+                    } else {
+                        listVideos[index]['isLiked'] = 0
+                    }
+                }
                 return Object.assign(data, {
                     followCount: follow[0].total,
                     productCount: product[0].total,
